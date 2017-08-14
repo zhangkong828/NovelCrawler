@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
 
 namespace NovelCrawler.Common
 {
@@ -21,51 +20,6 @@ namespace NovelCrawler.Common
             catch
             {
                 return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// 读取key value
-        /// </summary>
-        public static string ReadXMLKeyValue(string path, string key)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(path);
-                XmlNode node = doc.SelectSingleNode(@"//add[@key='" + key + "']");
-                XmlElement element = (XmlElement)node;
-                if (element == null)
-                    return string.Empty;
-                else
-                    return element.GetAttribute("value");
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// 保存key value
-        /// </summary>
-        public static bool SaveXMLKeyValue(string path, string key, string value)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(path);
-
-                XmlNode node = doc.SelectSingleNode(@"//add[@key='" + key + "']");
-                XmlElement element = (XmlElement)node;
-                element.SetAttribute("value", value);
-
-                doc.Save(path);
-                return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 
