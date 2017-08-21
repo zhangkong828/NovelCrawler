@@ -9,58 +9,98 @@ namespace NovelCrawler.Models
 {
     public class Rule
     {
-        [XmlElement]
+        /// <summary>
+        /// 站点名称
+        /// </summary>
+        [XmlElement(Order = 0)]
         public string SiteName { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 站点地址
+        /// </summary>
+        [XmlElement(Order = 1)]
         public string SiteUrl { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 更新列表
+        /// </summary>
+        [XmlElement(Order = 2)]
         public string NovelUpdateListUrl { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 更新列表
+        /// </summary>
+        [XmlElement(Order = 3)]
         public RuleItem NovelUpdateList { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说地址
+        /// </summary>
+        [XmlElement(Order = 4)]
         public RuleItem NovelUrl { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 找不到小说
+        /// </summary>
+        [XmlElement(Order = 5)]
         public RuleItem NovelErr { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说名称
+        /// </summary>
+        [XmlElement(Order = 6)]
         public RuleItem NovelName { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说缩略图
+        /// </summary>
+        [XmlElement(Order = 7)]
         public RuleItem NovelImage { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说分类
+        /// </summary>
+        [XmlElement(Order = 8)]
         public RuleItem NovelClassify { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说作者
+        /// </summary>
+        [XmlElement(Order = 9)]
         public RuleItem NovelAuthor { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说描述详情
+        /// </summary>
+        [XmlElement(Order = 10)]
         public RuleItem NovelDes { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 小说状态
+        /// </summary>
+        [XmlElement(Order = 11)]
         public RuleItem NovelState { get; set; }
 
-
-        [XmlElement]
+        /// <summary>
+        /// 章节列表
+        /// </summary>
+        [XmlElement(Order = 12)]
         public RuleItem ChapterList { get; set; }
-        [XmlElement]
+        /// <summary>
+        /// 章节名称
+        /// </summary>
+        [XmlElement(Order = 13)]
         public RuleItem ChapterName { get; set; }
-        [XmlElement]
+        /// <summary>
+        /// 章节地址
+        /// </summary>
+        [XmlElement(Order = 14)]
         public RuleItem ChapterUrl { get; set; }
-
-        [XmlElement]
+        /// <summary>
+        /// 章节内容
+        /// </summary>
+        [XmlElement(Order = 15)]
         public RuleItem ContentText { get; set; }
-        [XmlElement]
+        /// <summary>
+        /// 错误章节
+        /// </summary>
+        [XmlElement(Order = 16)]
         public RuleItem ContentErr { get; set; }
     }
 
     public class RuleItem
     {
+        [XmlIgnore]
+        public string Source { get; set; }
         public string Key { get; set; }
         public string Pattern { get; set; }
         public string FilterPattern { get; set; }
