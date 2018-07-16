@@ -2,19 +2,16 @@
 using NovelCrawler.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace NovelCrawler.Test
+namespace NovelCrawler.TestConsole
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var rule = XmlHelper.XmlDeserializeFromFile<Rule>("rule.xml", Encoding.UTF8);
+            var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
             TestLog("开始测试");
             Run(rule);
             TestLog("测试结束");
@@ -25,8 +22,13 @@ namespace NovelCrawler.Test
 
             Console.ReadKey();
         }
+        static void TestLog(string msg)
+        {
+            Console.WriteLine(msg);
 
-        static void Run(Rule rule)
+        }
+
+        static void Run(RuleModel rule)
         {
             //获取列表
             var novelList = new List<string>();
@@ -47,7 +49,7 @@ namespace NovelCrawler.Test
             }
             foreach (Match item in mc)
             {
-                var url = UrlHelper.Combine(rule.SiteUrl, item.Groups[1].Value);
+                var url = UtilityHelper.Combine(rule.SiteUrl, item.Groups[1].Value);
                 TestLog(url);
                 novelList.Add(url);
             }
@@ -58,7 +60,7 @@ namespace NovelCrawler.Test
             }
 
             //随机获取小说
-            rule.NovelUrl.Pattern = novelList[ClaCommon.Random(0, novelList.Count)];
+            rule.NovelUrl.Pattern = novelList[UtilityHelper.Random(0, novelList.Count)];
             TestLog($"随机获取小说：{rule.NovelUrl.Pattern}");
 
             //获取小说详情页
@@ -112,12 +114,12 @@ namespace NovelCrawler.Test
             }
 
             //随机获取章节
-            var randomChapter = chapterList[ClaCommon.Random(0, chapterList.Count)];
+            var randomChapter = chapterList[UtilityHelper.Random(0, chapterList.Count)];
             TestLog("---------------------------------------");
             TestLog("随机获取章节：");
             TestLog(randomChapter.Key);
             TestLog(randomChapter.Value);
-            var chapterUrl = UrlHelper.Combine(rule.SiteUrl, randomChapter.Value);
+            var chapterUrl = UtilityHelper.Combine(rule.SiteUrl, randomChapter.Value);
             var chapterHtml = HtmlHelper.Get(chapterUrl);
             if (Regex.IsMatch(chapterHtml, rule.ContentErr.Pattern))
             {
@@ -128,7 +130,7 @@ namespace NovelCrawler.Test
         }
 
 
-        static string RegexMatch(RuleItem rule, string html)
+        static string RegexMatch(PatternItem rule, string html)
         {
             var result = string.Empty;
             try
@@ -140,10 +142,6 @@ namespace NovelCrawler.Test
         }
 
         static StringBuilder sb = new StringBuilder();
-        static void TestLog(string msg)
-        {
-            Console.WriteLine(msg);
-            sb.AppendLine(msg);
-        }
+        
     }
 }

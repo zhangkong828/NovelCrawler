@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{25994BEA-E9F3-40B4-987F-B3A094B81AED}</ProjectGuid>
+    <ProjectGuid>{EBEB8B04-179E-4A8F-9ECE-68C0329AABF1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>NovelCrawler.RuleTest</RootNamespace>
-    <AssemblyName>NovelCrawler.RuleTest</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>NovelCrawler.Rule</RootNamespace>
+    <AssemblyName>NovelCrawler.Rule</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -47,11 +47,17 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleMain.cs">
+    <Compile Include="RuleForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RuleMain.Designer.cs">
-      <DependentUpon>RuleMain.cs</DependentUpon>
+    <Compile Include="RuleForm.Designer.cs">
+      <DependentUpon>RuleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestForm.Designer.cs">
+      <DependentUpon>TestForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -61,9 +67,13 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RuleMain.resx">
-      <DependentUpon>RuleMain.cs</DependentUpon>
+    <EmbeddedResource Include="RuleForm.resx">
+      <DependentUpon>RuleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestForm.resx">
+      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -77,6 +87,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Rules\testRule.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NovelCrawler.Common\NovelCrawler.Common.csproj">
+      <Project>{0BB62BC7-411D-4949-BC00-E9E189FA6800}</Project>
+      <Name>NovelCrawler.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NovelCrawler.Models\NovelCrawler.Models.csproj">
+      <Project>{6e0d989d-3032-4567-8f68-e304d87d3db0}</Project>
+      <Name>NovelCrawler.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Rules\testRule111.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

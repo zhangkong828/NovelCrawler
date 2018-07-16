@@ -1,6 +1,6 @@
-﻿namespace NovelCrawler.RuleTest
+﻿namespace NovelCrawler.Rule
 {
-    partial class RuleMain
+    partial class TestForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,19 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.rtb_record = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
-            // RuleMain
+            // rtb_record
+            // 
+            this.rtb_record.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtb_record.Location = new System.Drawing.Point(0, 0);
+            this.rtb_record.Name = "rtb_record";
+            this.rtb_record.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.rtb_record.Size = new System.Drawing.Size(508, 484);
+            this.rtb_record.TabIndex = 0;
+            this.rtb_record.Text = "";
+            // 
+            // TestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 430);
-            this.Name = "RuleMain";
-            this.Text = "RuleMain";
+            this.ClientSize = new System.Drawing.Size(508, 484);
+            this.Controls.Add(this.rtb_record);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Name = "TestForm";
+            this.Text = "规则测试";
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.RichTextBox rtb_record;
     }
 }

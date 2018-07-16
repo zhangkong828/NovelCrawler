@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace NovelCrawler.Common
 {
-    public static class XmlHelper
+    public class XmlHelper
     {
         private static void XmlSerializeInternal(Stream stream, object o, Encoding encoding)
         {
@@ -162,6 +160,5 @@ namespace NovelCrawler.Common
                 return false;
             }
         }
-
     }
 }
