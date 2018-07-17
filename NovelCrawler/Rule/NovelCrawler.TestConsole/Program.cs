@@ -11,16 +11,45 @@ namespace NovelCrawler.TestConsole
     {
         static void Main(string[] args)
         {
-            var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
-            TestLog("开始测试");
-            Run(rule);
-            TestLog("测试结束");
+            //var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
+            //TestLog("开始测试");
+            //Run(rule);
+            //TestLog("测试结束");
 
-            Logger.Info(sb.ToString());
+            Logger.Fatal("fatal");
+
+            try
+            {
+                Test0();
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "fatal{0}|{1}", "1", "2");
+            }
 
             Console.WriteLine("over");
 
             Console.ReadKey();
+        }
+
+        static void Test0()
+        {
+            try
+            {
+                Test();
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+
+        static void Test()
+        {
+            var arrys = new int[3];
+            arrys[4] = 1;
+
         }
         static void TestLog(string msg)
         {
@@ -142,6 +171,6 @@ namespace NovelCrawler.TestConsole
         }
 
         static StringBuilder sb = new StringBuilder();
-        
+
     }
 }

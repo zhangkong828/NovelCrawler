@@ -30,6 +30,15 @@ namespace NovelCrawler.Processer
             return _instance;
         }
 
+        public void Start()
+        {
+
+        }
+
+        public void Stop()
+        {
+
+        }
 
 
 

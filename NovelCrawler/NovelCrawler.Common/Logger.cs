@@ -7,45 +7,55 @@ namespace NovelCrawler.Common
 {
     public class Logger
     {
-        private static ILogger logger = LogManager.GetCurrentClassLogger();
+        private static ILogger logger = LogManager.GetLogger("");
 
-        public static void Error(string msg)
+        public static void Trace(string msg, params object[] args)
         {
-            logger.Error(msg);
+            logger.Trace(msg, args);
         }
 
-        public static void Info(string msg)
+        public static void Debug(string msg, params object[] args)
         {
-            logger.Info(msg);
+            logger.Debug(msg, args);
         }
 
-        public static void Fatal(string msg)
+        public static void Info(string msg, params object[] args)
         {
-            logger.Fatal(msg);
+            logger.Info(msg, args);
         }
 
-        public static void Debug(string msg)
+        public static void Warn(string msg, params object[] args)
         {
-            logger.Debug(msg);
+            logger.Warn(msg, args);
         }
 
-        public static void Trace(string msg)
+        public static void Error(string msg, params object[] args)
         {
-            logger.Trace(msg);
+            logger.Error(msg, args);
         }
 
-        public static void Warn(string msg)
+        public static void Error(Exception ex, string msg, params object[] args)
         {
-            logger.Warn(msg);
+            logger.Error(ex, msg, args);
+        }
+
+        public static void Fatal(string msg, params object[] args)
+        {
+            logger.Fatal(msg, args);
+        }
+
+        public static void Fatal(Exception ex, string msg, params string[] args)
+        {
+            logger.Fatal(ex, msg, args);
         }
 
 
-
-        public static void ConsoleWrite(string msg, ConsoleColor consoleColor = ConsoleColor.Green)
+        public static void ColorConsole(string msg, ConsoleColor consoleColor = ConsoleColor.Green)
         {
+            var old = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
-            Console.WriteLine("------------------------------------------------------");
             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]{msg}");
+            Console.ForegroundColor = old;
         }
 
 
