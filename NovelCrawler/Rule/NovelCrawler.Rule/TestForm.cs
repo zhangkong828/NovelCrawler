@@ -72,13 +72,13 @@ namespace NovelCrawler.Rule
 
             //随机获取小说
             ExcuteRecord("---------------------------------------");
-            rule.NovelUrl.Pattern = novelList[UtilityHelper.Random(0, novelList.Count)];
-            ExcuteRecord($"随机获取小说：{rule.NovelUrl.Pattern}");
+            rule.NovelUrl = novelList[UtilityHelper.Random(0, novelList.Count)];
+            ExcuteRecord($"随机获取小说：{rule.NovelUrl}");
 
             //获取小说详情页
             ExcuteRecord("---------------------------------------");
             ExcuteRecord("获取小说详情页");
-            var novelInfoHtml = HtmlHelper.Get(rule.NovelUrl.Pattern);
+            var novelInfoHtml = HtmlHelper.Get(rule.NovelUrl);
             if (string.IsNullOrEmpty(novelInfoHtml))
             {
                 ExcuteRecord("小说详情页无法访问");
@@ -98,13 +98,13 @@ namespace NovelCrawler.Rule
             ExcuteRecord($"Des:{ RegexMatch(rule.NovelDes, novelInfoHtml)}");
 
             //章节列表
-            rule.ChapterList.Pattern = rule.NovelUrl.Pattern;
+            rule.ChapterList = rule.NovelUrl;
 
             //获取小说章节页
             ExcuteRecord("---------------------------------------");
             ExcuteRecord("获取小说章节页");
             var chapterList = new List<KeyValuePair<string, string>>();
-            var chapterListHtml = HtmlHelper.Get(rule.ChapterList.Pattern);
+            var chapterListHtml = HtmlHelper.Get(rule.ChapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
                 ExcuteRecord("小说章节页无法访问");

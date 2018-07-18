@@ -183,13 +183,15 @@ namespace NovelCrawler.Rule
                 //采集规则，替换规则
                 if (p.PropertyType.Name == "String")
                 {
-                    rtxtRulePattern.Text = value.ToString();
+                    txtRuleFilter.Enabled = false;
+                    txtRulePattern.Text = value?.ToString();
                 }
                 else if (p.PropertyType.Name == "PatternItem")
                 {
+                    txtRuleFilter.Enabled = true;
                     var pattern = value as PatternItem;
-                    rtxtRulePattern.Text = pattern.Pattern;
-                    rtxtRuleFilter.Text = pattern.Filter;
+                    txtRulePattern.Text = pattern.Pattern;
+                    txtRuleFilter.Text = pattern.Filter;
                 }
 
             }
@@ -211,13 +213,13 @@ namespace NovelCrawler.Rule
             var obj = new object();
             if (p.PropertyType.Name == "String")
             {
-                obj = rtxtRulePattern.Text;
+                obj = txtRulePattern.Text;
             }
             else if (p.PropertyType.Name == "PatternItem")
             {
                 var val = new PatternItem();
-                val.Pattern = rtxtRulePattern.Text;
-                val.Filter = rtxtRuleFilter.Text;
+                val.Pattern = txtRulePattern.Text;
+                val.Filter = txtRuleFilter.Text;
                 obj = val;
             }
 

@@ -36,9 +36,9 @@
             this.rtxtRuleDescription = new System.Windows.Forms.RichTextBox();
             this.txtRuleName = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.rtxtRulePattern = new System.Windows.Forms.RichTextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rtxtRuleFilter = new System.Windows.Forms.RichTextBox();
+            this.txtRulePattern = new System.Windows.Forms.TextBox();
+            this.txtRuleFilter = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -57,12 +57,12 @@
             // 
             // listBoxRule
             // 
-            this.listBoxRule.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.listBoxRule.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listBoxRule.FormattingEnabled = true;
-            this.listBoxRule.ItemHeight = 19;
+            this.listBoxRule.ItemHeight = 16;
             this.listBoxRule.Location = new System.Drawing.Point(18, 49);
             this.listBoxRule.Name = "listBoxRule";
-            this.listBoxRule.Size = new System.Drawing.Size(243, 384);
+            this.listBoxRule.Size = new System.Drawing.Size(243, 388);
             this.listBoxRule.TabIndex = 0;
             this.listBoxRule.SelectedIndexChanged += new System.EventHandler(this.listBoxRule_SelectedIndexChanged);
             // 
@@ -117,7 +117,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.rtxtRulePattern);
+            this.groupBox2.Controls.Add(this.txtRulePattern);
             this.groupBox2.Location = new System.Drawing.Point(282, 188);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(448, 122);
@@ -125,33 +125,33 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "采集规则";
             // 
-            // rtxtRulePattern
-            // 
-            this.rtxtRulePattern.Location = new System.Drawing.Point(9, 21);
-            this.rtxtRulePattern.Name = "rtxtRulePattern";
-            this.rtxtRulePattern.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtxtRulePattern.Size = new System.Drawing.Size(424, 96);
-            this.rtxtRulePattern.TabIndex = 0;
-            this.rtxtRulePattern.Text = "";
-            // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.rtxtRuleFilter);
+            this.groupBox3.Controls.Add(this.txtRuleFilter);
             this.groupBox3.Location = new System.Drawing.Point(282, 316);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(439, 121);
+            this.groupBox3.Size = new System.Drawing.Size(439, 122);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "替换规则";
             // 
-            // rtxtRuleFilter
+            // txtRulePattern
             // 
-            this.rtxtRuleFilter.Location = new System.Drawing.Point(9, 19);
-            this.rtxtRuleFilter.Name = "rtxtRuleFilter";
-            this.rtxtRuleFilter.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtxtRuleFilter.Size = new System.Drawing.Size(424, 96);
-            this.rtxtRuleFilter.TabIndex = 1;
-            this.rtxtRuleFilter.Text = "";
+            this.txtRulePattern.Location = new System.Drawing.Point(9, 21);
+            this.txtRulePattern.Multiline = true;
+            this.txtRulePattern.Name = "txtRulePattern";
+            this.txtRulePattern.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtRulePattern.Size = new System.Drawing.Size(430, 95);
+            this.txtRulePattern.TabIndex = 0;
+            // 
+            // txtRuleFilter
+            // 
+            this.txtRuleFilter.Location = new System.Drawing.Point(9, 21);
+            this.txtRuleFilter.Multiline = true;
+            this.txtRuleFilter.Name = "txtRuleFilter";
+            this.txtRuleFilter.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtRuleFilter.Size = new System.Drawing.Size(430, 95);
+            this.txtRuleFilter.TabIndex = 0;
             // 
             // RuleForm
             // 
@@ -173,7 +173,9 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -189,7 +191,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox txtRuleName;
         private System.Windows.Forms.RichTextBox rtxtRuleDescription;
-        private System.Windows.Forms.RichTextBox rtxtRulePattern;
-        private System.Windows.Forms.RichTextBox rtxtRuleFilter;
+        private System.Windows.Forms.TextBox txtRulePattern;
+        private System.Windows.Forms.TextBox txtRuleFilter;
     }
 }

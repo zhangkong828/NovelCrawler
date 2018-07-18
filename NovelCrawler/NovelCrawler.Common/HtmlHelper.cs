@@ -9,7 +9,7 @@ namespace NovelCrawler.Common
 {
     public class HtmlHelper
     {
-        public static string Get(string url, string cookie = null, string encodingStr = "UTF-8")
+        public static string Get(string url, string cookie = null, string encodingStr = "UTF8")
         {
             var html = "";
             var encoding = Encoding.UTF8;
@@ -18,6 +18,9 @@ namespace NovelCrawler.Common
                 encoding = Encoding.GetEncoding(encodingStr);
             }
             catch { }
+            int tryCount = 3;
+            GetHtml:
+            bool isError = false;
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(url);
@@ -32,10 +35,20 @@ namespace NovelCrawler.Common
                     html = sr.ReadToEnd();
                 }
                 html = GetResponseBody(response, encoding);
+                isError = string.IsNullOrWhiteSpace(html);
             }
             catch (Exception ex)
             {
+                isError = true;
                 //log
+            }
+            if (isError)
+            {
+                if (tryCount > 0)
+                {
+                    tryCount--;
+                    goto GetHtml;
+                }
             }
             return html;
         }

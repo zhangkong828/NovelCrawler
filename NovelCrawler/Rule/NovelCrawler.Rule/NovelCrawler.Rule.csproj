@@ -104,10 +104,5 @@
       <Name>NovelCrawler.Models</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Rules\testRule111.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,46 +11,17 @@ namespace NovelCrawler.TestConsole
     {
         static void Main(string[] args)
         {
-            //var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
-            //TestLog("开始测试");
-            //Run(rule);
-            //TestLog("测试结束");
+            var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
+            TestLog("开始测试");
+            Run(rule);
+            TestLog("测试结束");
 
-            Logger.Fatal("fatal");
-
-            try
-            {
-                Test0();
-            }
-            catch (Exception ex)
-            {
-                Logger.Fatal(ex, "fatal{0}|{1}", "1", "2");
-            }
 
             Console.WriteLine("over");
 
             Console.ReadKey();
         }
 
-        static void Test0()
-        {
-            try
-            {
-                Test();
-            }
-            catch
-            {
-                throw;
-            }
-
-        }
-
-        static void Test()
-        {
-            var arrys = new int[3];
-            arrys[4] = 1;
-
-        }
         static void TestLog(string msg)
         {
             Console.WriteLine(msg);
@@ -89,13 +60,13 @@ namespace NovelCrawler.TestConsole
             }
 
             //随机获取小说
-            rule.NovelUrl.Pattern = novelList[UtilityHelper.Random(0, novelList.Count)];
-            TestLog($"随机获取小说：{rule.NovelUrl.Pattern}");
+            rule.NovelUrl = novelList[UtilityHelper.Random(0, novelList.Count)];
+            TestLog($"随机获取小说：{rule.NovelUrl}");
 
             //获取小说详情页
             TestLog("---------------------------------------");
             TestLog("获取小说详情页");
-            var novelInfoHtml = HtmlHelper.Get(rule.NovelUrl.Pattern);
+            var novelInfoHtml = HtmlHelper.Get(rule.NovelUrl);
             if (string.IsNullOrEmpty(novelInfoHtml))
             {
                 TestLog("小说详情页无法访问");
@@ -115,13 +86,13 @@ namespace NovelCrawler.TestConsole
             TestLog($"Des:{ RegexMatch(rule.NovelDes, novelInfoHtml)}");
 
             //章节列表
-            rule.ChapterList.Pattern = rule.NovelUrl.Pattern;
+            rule.ChapterList = rule.NovelUrl;
 
             //获取小说章节页
             TestLog("---------------------------------------");
             TestLog("获取小说章节页");
             var chapterList = new List<KeyValuePair<string, string>>();
-            var chapterListHtml = HtmlHelper.Get(rule.ChapterList.Pattern);
+            var chapterListHtml = HtmlHelper.Get(rule.ChapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
                 TestLog("小说章节页无法访问");

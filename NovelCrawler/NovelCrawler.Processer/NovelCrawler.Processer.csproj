@@ -4,4 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NovelCrawler.Common\NovelCrawler.Common.csproj" />
+    <ProjectReference Include="..\NovelCrawler.Models\NovelCrawler.Models.csproj" />
+  </ItemGroup>
+
 </Project>
