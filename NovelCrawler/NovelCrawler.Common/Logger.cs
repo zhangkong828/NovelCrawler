@@ -9,6 +9,8 @@ namespace NovelCrawler.Common
     {
         private static ILogger logger = LogManager.GetLogger("");
 
+        public static Action<string> _customAction = null;
+
         public static void Trace(string msg, params object[] args)
         {
             logger.Trace(msg, args);
@@ -50,15 +52,25 @@ namespace NovelCrawler.Common
         }
 
 
-        public static void ColorConsole(string msg, ConsoleColor consoleColor = ConsoleColor.Green)
+        public static void ColorConsole(string msg, ConsoleColor consoleColor = ConsoleColor.White)
+        {
+            var old = Console.ForegroundColor;
+            Console.ForegroundColor = consoleColor;
+            Console.WriteLine($"{msg}");
+            Console.ForegroundColor = old;
+
+            _customAction?.Invoke(msg);
+        }
+
+        public static void ColorConsole2(string msg, ConsoleColor consoleColor = ConsoleColor.Red)
         {
             var old = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]{msg}");
             Console.ForegroundColor = old;
+
+            _customAction?.Invoke(msg);
         }
-
-
 
     }
 }

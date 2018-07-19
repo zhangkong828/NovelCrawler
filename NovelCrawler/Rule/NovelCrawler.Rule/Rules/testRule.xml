@@ -8,7 +8,7 @@
     <Pattern>&lt;span class="s2"&gt;&lt;a href="/(.+?)/" target="_blank"&gt;.+?&lt;/a&gt;&lt;/span&gt;&lt;span class="s3"&gt;</Pattern>
     <Filter />
   </NovelUpdateList>
-  <NovelUrl>https://www.xxbiquge.com/</NovelUrl>
+  <NovelUrl>https://www.xxbiquge.com/{NovelKey}</NovelUrl>
   <NovelErr>
     <Key>NovelErr</Key>
     <Pattern>找不到您请求的页面</Pattern>
@@ -46,10 +46,10 @@
   </NovelState>
   <ChapterIndex>
     <Key>ChapterIndex</Key>
-    <Pattern>&lt;dd&gt;&lt;a href=".+?".*?&gt;(.+?)&lt;/a&gt;&lt;/dd&gt;</Pattern>
+    <Pattern></Pattern>
     <Filter />
   </ChapterIndex>
-  <ChapterList>aaa</ChapterList>
+  <ChapterList>https://www.xxbiquge.com/{NovelKey}</ChapterList>
   <ChapterName>
     <Key>ChapterName</Key>
     <Pattern>&lt;dd&gt;&lt;a href=".+?".*?&gt;(.+?)&lt;/a&gt;&lt;/dd&gt;</Pattern>
@@ -60,7 +60,7 @@
     <Pattern>&lt;dd&gt;&lt;a href="(.+?)".*?&gt;.+?&lt;/a&gt;&lt;/dd&gt;</Pattern>
     <Filter />
   </ChapterUrl>
-  <ContentUrl>bbb</ContentUrl>
+  <ContentUrl>https://www.xxbiquge.com/{ChapterKey}</ContentUrl>
   <ContentText>
     <Key>ContentText</Key>
     <Pattern>&lt;div id="content"&gt;([\s\S]+?)&lt;/div&gt;</Pattern>

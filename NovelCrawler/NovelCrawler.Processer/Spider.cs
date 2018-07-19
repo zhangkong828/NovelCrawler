@@ -25,6 +25,7 @@ namespace NovelCrawler.Processer
         {
             try
             {
+                Logger.ColorConsole("开始测试");
                 Logger.ColorConsole("---------------------------------------");
                 Logger.ColorConsole("获取更新列表");
                 var novelKeys = GetUpdateList();
@@ -33,7 +34,7 @@ namespace NovelCrawler.Processer
                     Logger.ColorConsole(item);
                 }
                 Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("随机获取一本小说");
+                Logger.ColorConsole("随机获取小说");
                 var novelKey = novelKeys[UtilityHelper.Random(0, novelKeys.Count)];
                 var info = GetNovelInfo(novelKey);
                 Logger.ColorConsole(string.Format("Name:{0}", info.Name));
@@ -44,8 +45,18 @@ namespace NovelCrawler.Processer
                 Logger.ColorConsole(string.Format("Des:{0}", info.Des));
                 Logger.ColorConsole("---------------------------------------");
                 Logger.ColorConsole("获取章节列表");
-
-
+                var chapterIndex = info.ChapterIndex;
+                var chapterList = GetNovelChapterList(novelKey, chapterIndex);
+                Logger.ColorConsole("---------------------------------------");
+                Logger.ColorConsole("随机获取章节");
+                var randomChapter = chapterList[UtilityHelper.Random(0, chapterList.Count)];
+                Logger.ColorConsole(randomChapter.Key);
+                Logger.ColorConsole(randomChapter.Value);
+                var chapterKey = randomChapter.Value;
+                var content = GetContent(novelKey, chapterIndex, chapterKey);
+                Logger.ColorConsole(content);
+                Logger.ColorConsole("---------------------------------------");
+                Logger.ColorConsole("测试结束");
             }
             catch (Exception ex)
             {
@@ -88,17 +99,36 @@ namespace NovelCrawler.Processer
             var result = string.Empty;
             try
             {
-                result = Regex.Match(html, rule.Pattern).Groups[1].Value;
-                if (!string.IsNullOrWhiteSpace(rule.Filter) && rule.Filter.Contains("&&"))
+                if (!string.IsNullOrWhiteSpace(rule.Pattern) && Regex.IsMatch(html, rule.Pattern))
                 {
-
+                    result = Regex.Match(html, rule.Pattern).Groups[1].Value;
+                    if (!string.IsNullOrWhiteSpace(rule.Filter) && rule.Filter.Contains("&&"))
+                    {
+                        var lines = rule.Filter.Split(new string[] { "'\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var line in lines)
+                        {
+                            if (!string.IsNullOrWhiteSpace(line) && line.Contains("&&"))
+                            {
+                                var strs = line.Split(new string[] { "&&" }, StringSplitOptions.None);
+                                var str1 = strs[0];
+                                var str2 = strs[1];
+                                if (!string.IsNullOrWhiteSpace(str1))
+                                {
+                                    result.Replace(str1, str2);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch { }
             return result;
         }
 
-
+        /// <summary>
+        /// 获取小说更新列表
+        /// </summary>
+        /// <returns></returns>
         private List<string> GetUpdateList()
         {
             var result = new List<string>();
@@ -124,10 +154,18 @@ namespace NovelCrawler.Processer
             return result;
         }
 
+        /// <summary>
+        /// 获取小说详情
+        /// </summary>
+        /// <param name="novelKey"></param>
+        /// <returns></returns>
         private NovelInfo GetNovelInfo(string novelKey)
         {
+            //小说信息页url处理
             var novelUrl = _rule.NovelUrl.Replace("{NovelKey}", novelKey);
-            Logger.ColorConsole(novelUrl);
+            if (!novelUrl.Contains(_rule.SiteUrl))
+                novelUrl = UtilityHelper.Combine(_rule.SiteUrl, novelUrl);
+            Logger.ColorConsole("NovelUrl:" + novelUrl);
             var novelInfoHtml = HtmlHelper.Get(novelUrl);
             if (string.IsNullOrWhiteSpace(novelInfoHtml))
                 throw new Exception("小说详情页无法访问");
@@ -143,21 +181,67 @@ namespace NovelCrawler.Processer
             info.Author = RegexMatch(_rule.NovelAuthor, novelInfoHtml);
             info.State = RegexMatch(_rule.NovelState, novelInfoHtml);
             info.Des = RegexMatch(_rule.NovelDes, novelInfoHtml);
-            //章节目录
-            //var chapterIndex = "";
-            //if (!string.IsNullOrWhiteSpace(_rule.ChapterIndex))
-            //{
-            //    if (Regex.IsMatch(novelInfoHtml, _rule.ChapterIndex))
-            //    {
-            //        //chapterIndex = Regex.Match(novelInfoHtml, _rule)
-            //    }
-            //}
+            info.ChapterIndex = RegexMatch(_rule.ChapterIndex, novelInfoHtml); //章节目录
             return info;
         }
 
-        private void GetNovelChapterList()
+        /// <summary>
+        /// 获取小说章节目录
+        /// </summary>
+        /// <param name="novelKey"></param>
+        /// <param name="chapterIndex"></param>
+        /// <returns></returns>
+        private List<KeyValuePair<string, string>> GetNovelChapterList(string novelKey, string chapterIndex)
         {
+            var result = new List<KeyValuePair<string, string>>();
+            //章节目录页url处理
+            var chapterList = _rule.ChapterList.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex);
+            if (!chapterList.Contains(_rule.SiteUrl))
+                chapterList = UtilityHelper.Combine(_rule.SiteUrl, chapterList);
+            Logger.ColorConsole("ChapterList:" + chapterList);
+            var chapterListHtml = HtmlHelper.Get(chapterList);
+            if (string.IsNullOrEmpty(chapterListHtml))
+            {
+                throw new Exception("小说章节目录无法访问");
+            }
+            var chapterNameMc = Regex.Matches(chapterListHtml, _rule.ChapterName.Pattern);
+            var chapterUrlMc = Regex.Matches(chapterListHtml, _rule.ChapterUrl.Pattern);
+            if (chapterNameMc.Count <= 0 || chapterUrlMc.Count <= 0 || chapterNameMc.Count != chapterUrlMc.Count)
+            {
+                throw new Exception("获取小说章节失败");
+            }
+            for (int i = 0; i < chapterNameMc.Count; i++)
+            {
+                var name = chapterNameMc[i].Groups[1].Value.Trim();
+                var url = chapterUrlMc[i].Groups[1].Value.Trim();
+                Logger.ColorConsole(string.Format("{0}-{1}", name, url));
+                result.Add(new KeyValuePair<string, string>(name, url));
+            }
+            return result;
+        }
 
+        /// <summary>
+        /// 获取小说章节内容
+        /// </summary>
+        /// <param name="novelKey"></param>
+        /// <param name="chapterIndex"></param>
+        /// <param name="chapterKey"></param>
+        /// <returns></returns>
+        private string GetContent(string novelKey, string chapterIndex, string chapterKey)
+        {
+            var content = string.Empty;
+            //章节内容页url处理
+            var contentUrl = _rule.ContentUrl.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex).Replace("{ChapterKey}", chapterKey);
+            if (!contentUrl.Contains(_rule.SiteUrl))
+                contentUrl = UtilityHelper.Combine(_rule.SiteUrl, contentUrl);
+            Logger.ColorConsole("ContentUrl:" + contentUrl);
+            var chapterHtml = HtmlHelper.Get(contentUrl);
+            if (Regex.IsMatch(chapterHtml, _rule.ContentErr.Pattern))
+            {
+                throw new Exception("匹配到章节错误标识，失败");
+            }
+            content = RegexMatch(_rule.ContentText, chapterHtml);
+            return content;
         }
 
     }

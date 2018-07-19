@@ -1,5 +1,6 @@
 ﻿using NovelCrawler.Common;
 using NovelCrawler.Models;
+using NovelCrawler.Processer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,11 +13,12 @@ namespace NovelCrawler.TestConsole
         static void Main(string[] args)
         {
             var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
-            TestLog("开始测试");
-            Run(rule);
-            TestLog("测试结束");
+            //TestLog("开始测试");
+            //Run(rule);
+            //TestLog("测试结束");
 
-
+            var spider = new Spider(null, rule);
+            spider.TestRule();
             Console.WriteLine("over");
 
             Console.ReadKey();
