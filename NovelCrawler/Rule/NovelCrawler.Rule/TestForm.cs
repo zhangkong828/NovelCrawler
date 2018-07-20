@@ -37,12 +37,14 @@ namespace NovelCrawler.Rule
 
         private void ExcuteRecord(string msg)
         {
-            rtb_record.Invoke(new Action(() =>
+            if (rtb_record.IsHandleCreated)
             {
-                rtb_record.AppendText(msg + "\r\n");
-                rtb_record.ScrollToCaret();
-            }));
-
+                rtb_record.Invoke(new Action(() =>
+                {
+                    rtb_record.AppendText(msg + "\r\n");
+                    rtb_record.ScrollToCaret();
+                }));
+            }
         }
 
         private void RunTest(RuleModel rule)

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace NovelCrawler.Models
@@ -42,7 +44,7 @@ namespace NovelCrawler.Models
         public PatternItem NovelName { get; set; }
 
         [XmlElement(Order = 8)]
-        [RuleDescription("小说缩略图", "获得小说封面")]
+        [RuleDescription("小说缩略图", "获得小说封面，可以使用替换标签&&")]
         public PatternItem NovelImage { get; set; }
 
         [XmlElement(Order = 9)]
@@ -83,7 +85,7 @@ namespace NovelCrawler.Models
         public string ContentUrl { get; set; }
 
         [XmlElement(Order = 18)]
-        [RuleDescription("章节内容", "章节正文，可以使用替换标签&&，去除相关文字水印和广告")]
+        [RuleDescription("章节内容", "章节正文，可以使用替换标签&&")]
         public PatternItem ContentText { get; set; }
 
         [XmlElement(Order = 19)]
@@ -100,7 +102,8 @@ namespace NovelCrawler.Models
         [RuleDescription("采集规则", "正则表达式")]
         public string Pattern { get; set; }
         [RuleDescription("过滤规则", "正则表达式替换")]
-        public string Filter { get; set; }
+        public CDATA Filter { get; set; }
+
     }
 
 
@@ -117,4 +120,49 @@ namespace NovelCrawler.Models
         }
     }
 
+
+    public class CDATA : IXmlSerializable
+    {
+        public CDATA()
+        {
+        }
+        public CDATA(string xml)
+        {
+            this.OuterXml = xml;
+        }
+        public string OuterXml { get; private set; }
+        public string InnerXml { get; private set; }
+
+        private string _innerSourceXml;
+        public string InnerSourceXml
+        {
+            get
+            {
+                return InnerXml;
+            }
+        }
+        XmlSchema IXmlSerializable.GetSchema()
+        {
+            return null;
+        }
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            string s = reader.ReadInnerXml();
+            string startTag = "<![CDATA[";
+            string endTag = "]]>";
+            char[] trims = new char[] { '\r', '\n', '\t', ' ' };
+            s = s.Trim(trims);
+            if (s.StartsWith(startTag) && s.EndsWith(endTag))
+            {
+                s = s.Substring(startTag.Length, s.LastIndexOf(endTag) - startTag.Length);
+            }
+            this._innerSourceXml = s;
+            this.InnerXml = s.Trim(trims);
+        }
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            writer.WriteCData(this.OuterXml);
+        }
+    }
 }
+

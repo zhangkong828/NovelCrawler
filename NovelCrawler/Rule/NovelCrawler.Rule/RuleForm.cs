@@ -98,6 +98,12 @@ namespace NovelCrawler.Rule
             if (string.IsNullOrWhiteSpace(_currentSelectRuleKey))
                 return;
 
+            if (!string.IsNullOrEmpty(_currentSelectProperty))//第一次是没有的
+            {
+                //保存 当前的属性
+                SaveCurrentRuleProperty(_currentSelectProperty);
+            }
+
             var fm = new TestForm(_rules[_currentSelectRuleKey]);
             fm.ShowDialog();
         }
@@ -111,6 +117,12 @@ namespace NovelCrawler.Rule
         {
             try
             {
+                if (!string.IsNullOrEmpty(_currentSelectProperty))//第一次是没有的
+                {
+                    //保存 当前的属性
+                    SaveCurrentRuleProperty(_currentSelectProperty);
+                }
+
                 foreach (var item in _rules)
                 {
                     var path = _directoryPath + "\\" + item.Key;
@@ -185,13 +197,14 @@ namespace NovelCrawler.Rule
                 {
                     txtRuleFilter.Enabled = false;
                     txtRulePattern.Text = value?.ToString();
+                    txtRuleFilter.Text = "";
                 }
                 else if (p.PropertyType.Name == "PatternItem")
                 {
                     txtRuleFilter.Enabled = true;
                     var pattern = value as PatternItem;
                     txtRulePattern.Text = pattern.Pattern;
-                    txtRuleFilter.Text = pattern.Filter;
+                    txtRuleFilter.Text = pattern.Filter.OuterXml;
                 }
 
             }
@@ -219,7 +232,7 @@ namespace NovelCrawler.Rule
             {
                 var val = new PatternItem();
                 val.Pattern = txtRulePattern.Text;
-                val.Filter = txtRuleFilter.Text;
+                val.Filter = new CDATA(txtRuleFilter.Text);
                 obj = val;
             }
 

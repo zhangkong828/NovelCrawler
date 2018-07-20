@@ -1,74 +1,70 @@
 ﻿<Rule>
-  <SiteName>新笔趣阁</SiteName>
-  <SiteUrl>https://www.xxbiquge.com/</SiteUrl>
-  <SiteCharset>utf8</SiteCharset>
-  <NovelUpdateListUrl>https://www.xxbiquge.com/</NovelUpdateListUrl>
-  <NovelUpdateList>
-    <Key>NovelUpdateList</Key>
-    <Pattern>&lt;span class="s2"&gt;&lt;a href="/(.+?)/" target="_blank"&gt;.+?&lt;/a&gt;&lt;/span&gt;&lt;span class="s3"&gt;</Pattern>
-    <Filter />
-  </NovelUpdateList>
-  <NovelUrl>https://www.xxbiquge.com/{NovelKey}</NovelUrl>
-  <NovelErr>
-    <Key>NovelErr</Key>
-    <Pattern>找不到您请求的页面</Pattern>
-    <Filter />
-  </NovelErr>
-  <NovelName>
-    <Key>NovelName</Key>
-    <Pattern>&lt;h1&gt;(.+?)&lt;/h1&gt;</Pattern>
-    <Filter />
-  </NovelName>
-  <NovelImage>
-    <Key>NovelImage</Key>
-    <Pattern>&lt;div id="fmimg"&gt;[\s\S]*?&lt;img alt=.+?src="(.+?)"</Pattern>
-    <Filter />
-  </NovelImage>
-  <NovelClassify>
-    <Key>NovelClassify</Key>
-    <Pattern>&amp;gt; &lt;a href="/xclass/.+?/.+?html"&gt;(.+?)&lt;/a&gt; &amp;gt;</Pattern>
-    <Filter />
-  </NovelClassify>
-  <NovelAuthor>
-    <Key>NovelAuthor</Key>
-    <Pattern>&lt;p&gt;作&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;者：(.+?)&lt;/p&gt;</Pattern>
-    <Filter />
-  </NovelAuthor>
-  <NovelDes>
-    <Key>NovelDes</Key>
-    <Pattern>&lt;div id="intro"&gt;([\s\S]*?)&lt;/div&gt;</Pattern>
-    <Filter />
-  </NovelDes>
-  <NovelState>
-    <Key>NovelState</Key>
-    <Pattern>状&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;态：(.+?),</Pattern>
-    <Filter />
-  </NovelState>
-  <ChapterIndex>
-    <Key>ChapterIndex</Key>
-    <Pattern></Pattern>
-    <Filter />
-  </ChapterIndex>
-  <ChapterList>https://www.xxbiquge.com/{NovelKey}</ChapterList>
-  <ChapterName>
-    <Key>ChapterName</Key>
-    <Pattern>&lt;dd&gt;&lt;a href=".+?".*?&gt;(.+?)&lt;/a&gt;&lt;/dd&gt;</Pattern>
-    <Filter />
-  </ChapterName>
-  <ChapterUrl>
-    <Key>ChapterUrl</Key>
-    <Pattern>&lt;dd&gt;&lt;a href="(.+?)".*?&gt;.+?&lt;/a&gt;&lt;/dd&gt;</Pattern>
-    <Filter />
-  </ChapterUrl>
-  <ContentUrl>https://www.xxbiquge.com/{ChapterKey}</ContentUrl>
-  <ContentText>
-    <Key>ContentText</Key>
-    <Pattern>&lt;div id="content"&gt;([\s\S]+?)&lt;/div&gt;</Pattern>
-    <Filter />
-  </ContentText>
-  <ContentErr>
-    <Key>ContentErr</Key>
-    <Pattern>您访问的页面可能暂时未更新、已更名或已经删除，请稍后访问或马上点此举报</Pattern>
-    <Filter />
-  </ContentErr>
+    <SiteName>新笔趣阁</SiteName>
+    <SiteUrl>https://www.xxbiquge.com/</SiteUrl>
+    <SiteCharset>utf8</SiteCharset>
+    <NovelUpdateListUrl>https://www.xxbiquge.com/</NovelUpdateListUrl>
+    <NovelUpdateList>
+        <Key>NovelUpdateList</Key>
+        <Pattern>&lt;span class="s2"&gt;&lt;a href="/(.+?)/" target="_blank"&gt;.+?&lt;/a&gt;&lt;/span&gt;&lt;span class="s3"&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelUpdateList>
+    <NovelUrl>https://www.xxbiquge.com/{NovelKey}</NovelUrl>
+    <NovelErr>
+        <Key>NovelErr</Key>
+        <Pattern>找不到您请求的页面</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelErr>
+    <NovelName>
+        <Key>NovelName</Key>
+        <Pattern>&lt;h1&gt;(.+?)&lt;/h1&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelName>
+    <NovelImage>
+        <Pattern>&lt;div id="fmimg"&gt;[\s\S]*?&lt;img alt=.+?src="(.+?)"</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelImage>
+    <NovelClassify>
+        <Key>NovelClassify</Key>
+        <Pattern>&amp;gt; &lt;a href="/xclass/.+?/.+?html"&gt;(.+?)&lt;/a&gt; &amp;gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelClassify>
+    <NovelAuthor>
+        <Pattern>&lt;p&gt;作&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;者：(.+?)&lt;/p&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelAuthor>
+    <NovelDes>
+        <Key>NovelDes</Key>
+        <Pattern>&lt;div id="intro"&gt;([\s\S]*?)&lt;/div&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelDes>
+    <NovelState>
+        <Key>NovelState</Key>
+        <Pattern>状&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;态：(.+?),</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </NovelState>
+    <ChapterIndex>
+        <Pattern />
+        <Filter><![CDATA[]]></Filter>
+    </ChapterIndex>
+    <ChapterList>https://www.xxbiquge.com/{NovelKey}</ChapterList>
+    <ChapterName>
+        <Key>ChapterName</Key>
+        <Pattern>&lt;dd&gt;&lt;a href=".+?".*?&gt;(.+?)&lt;/a&gt;&lt;/dd&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </ChapterName>
+    <ChapterUrl>
+        <Pattern>&lt;dd&gt;&lt;a href="(.+?)".*?&gt;.+?&lt;/a&gt;&lt;/dd&gt;</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </ChapterUrl>
+    <ContentUrl>https://www.xxbiquge.com/{ChapterKey}</ContentUrl>
+    <ContentText>
+        <Pattern>&lt;div id="content"&gt;([\s\S]+?)&lt;/div&gt;</Pattern>
+        <Filter><![CDATA[1&&a
+2&&b
+]]></Filter>
+    </ContentText>
+    <ContentErr>
+        <Pattern>您访问的页面可能暂时未更新、已更名或已经删除，请稍后访问或马上点此举报</Pattern>
+        <Filter><![CDATA[]]></Filter>
+    </ContentErr>
 </Rule>

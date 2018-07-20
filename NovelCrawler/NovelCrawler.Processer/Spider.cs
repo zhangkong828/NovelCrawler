@@ -16,11 +16,13 @@ namespace NovelCrawler.Processer
 
         public Spider(ProcessEngineOptions option, RuleModel rule)
         {
-            _option = option;
             _rule = rule;
 
         }
 
+        /// <summary>
+        /// 测试规则
+        /// </summary>
         public void TestRule()
         {
             try
@@ -94,42 +96,12 @@ namespace NovelCrawler.Processer
             }
         }
 
-        private string RegexMatch(PatternItem rule, string html)
-        {
-            var result = string.Empty;
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(rule.Pattern) && Regex.IsMatch(html, rule.Pattern))
-                {
-                    result = Regex.Match(html, rule.Pattern).Groups[1].Value;
-                    if (!string.IsNullOrWhiteSpace(rule.Filter) && rule.Filter.Contains("&&"))
-                    {
-                        var lines = rule.Filter.Split(new string[] { "'\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach (var line in lines)
-                        {
-                            if (!string.IsNullOrWhiteSpace(line) && line.Contains("&&"))
-                            {
-                                var strs = line.Split(new string[] { "&&" }, StringSplitOptions.None);
-                                var str1 = strs[0];
-                                var str2 = strs[1];
-                                if (!string.IsNullOrWhiteSpace(str1))
-                                {
-                                    result.Replace(str1, str2);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch { }
-            return result;
-        }
 
         /// <summary>
         /// 获取小说更新列表
         /// </summary>
         /// <returns></returns>
-        private List<string> GetUpdateList()
+        public List<string> GetUpdateList()
         {
             var result = new List<string>();
             //最新列表地址
@@ -159,7 +131,7 @@ namespace NovelCrawler.Processer
         /// </summary>
         /// <param name="novelKey"></param>
         /// <returns></returns>
-        private NovelInfo GetNovelInfo(string novelKey)
+        public NovelInfo GetNovelInfo(string novelKey)
         {
             //小说信息页url处理
             var novelUrl = _rule.NovelUrl.Replace("{NovelKey}", novelKey);
@@ -191,7 +163,7 @@ namespace NovelCrawler.Processer
         /// <param name="novelKey"></param>
         /// <param name="chapterIndex"></param>
         /// <returns></returns>
-        private List<KeyValuePair<string, string>> GetNovelChapterList(string novelKey, string chapterIndex)
+        public List<KeyValuePair<string, string>> GetNovelChapterList(string novelKey, string chapterIndex)
         {
             var result = new List<KeyValuePair<string, string>>();
             //章节目录页url处理
@@ -213,6 +185,7 @@ namespace NovelCrawler.Processer
             for (int i = 0; i < chapterNameMc.Count; i++)
             {
                 var name = chapterNameMc[i].Groups[1].Value.Trim();
+                name = ReplaceMatch(name, _rule.ChapterName.Filter.OuterXml);
                 var url = chapterUrlMc[i].Groups[1].Value.Trim();
                 Logger.ColorConsole(string.Format("{0}-{1}", name, url));
                 result.Add(new KeyValuePair<string, string>(name, url));
@@ -227,7 +200,7 @@ namespace NovelCrawler.Processer
         /// <param name="chapterIndex"></param>
         /// <param name="chapterKey"></param>
         /// <returns></returns>
-        private string GetContent(string novelKey, string chapterIndex, string chapterKey)
+        public string GetContent(string novelKey, string chapterIndex, string chapterKey)
         {
             var content = string.Empty;
             //章节内容页url处理
@@ -242,6 +215,46 @@ namespace NovelCrawler.Processer
             }
             content = RegexMatch(_rule.ContentText, chapterHtml);
             return content;
+        }
+
+
+        private string RegexMatch(PatternItem rule, string html)
+        {
+            var result = string.Empty;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(rule.Pattern) && Regex.IsMatch(html, rule.Pattern))
+                {
+                    //匹配
+                    result = Regex.Match(html, rule.Pattern).Groups[1].Value;
+                    //替换
+                    result = ReplaceMatch(result, rule.Filter.OuterXml);
+                }
+            }
+            catch { }
+            return result;
+        }
+
+        private string ReplaceMatch(string str, string filter)
+        {
+            if (!string.IsNullOrWhiteSpace(filter) && filter.Contains("&&"))
+            {
+                var lines = filter.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    if (!string.IsNullOrWhiteSpace(line) && line.Contains("&&"))
+                    {
+                        var strs = line.Split(new string[] { "&&" }, StringSplitOptions.None);
+                        var str1 = strs[0];
+                        var str2 = strs[1];
+                        if (!string.IsNullOrWhiteSpace(str1))
+                        {
+                            str.Replace(str1, str2);
+                        }
+                    }
+                }
+            }
+            return str;
         }
 
     }
