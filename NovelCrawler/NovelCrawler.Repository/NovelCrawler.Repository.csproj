@@ -8,4 +8,8 @@
     <PackageReference Include="MongoDB.Driver" Version="2.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NovelCrawler.Infrastructure\NovelCrawler.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

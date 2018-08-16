@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using NovelCrawler.Infrastructure.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +35,9 @@ namespace NovelCrawler.Repository
 
         private MongoHelper()
         {
+            _constr = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:connectionString");
+            _dbName = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:defaultDBName");
+            _collectionName = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:defaultCollectionName");
             _client = new MongoClient(_constr);
         }
 
