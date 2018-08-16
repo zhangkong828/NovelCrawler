@@ -35,9 +35,9 @@ namespace NovelCrawler.Repository
 
         private MongoHelper()
         {
-            _constr = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:connectionString");
-            _dbName = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:defaultDBName");
-            _collectionName = ConfigurationManager.GetValue("ConnectionStrings:MongoDB:defaultCollectionName");
+            _constr = ConfigurationManager.GetValue("MongoDB:connectionString");
+            _dbName = ConfigurationManager.GetValue("MongoDB:defaultDBName");
+            _collectionName = ConfigurationManager.GetValue("MongoDB:defaultCollectionName");
             _client = new MongoClient(_constr);
         }
 

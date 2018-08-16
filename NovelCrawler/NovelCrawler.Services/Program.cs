@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NovelCrawler.Infrastructure.Configuration;
+using System;
 
 namespace NovelCrawler.Services
 {
@@ -6,7 +7,16 @@ namespace NovelCrawler.Services
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+
+            var _constr = ConfigurationManager.GetValue("MongoDB:connectionString");
+            var _dbName = ConfigurationManager.GetValue("MongoDB:defaultDBName");
+            var _collectionName = ConfigurationManager.GetValue("MongoDB:defaultCollectionName");
+
+            Console.WriteLine(_constr);
+            Console.WriteLine(_dbName);
+            Console.WriteLine(_collectionName);
+
+            Console.ReadKey();
         }
     }
 }

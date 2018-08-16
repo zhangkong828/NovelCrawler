@@ -9,7 +9,7 @@ namespace NovelCrawler.Infrastructure.Configuration
 {
     public class ConfigurationManager
     {
-        static IConfiguration Configuration;
+        static IConfiguration Configuration { get; set; }
         static ConfigurationManager()
         {
             var provider = new EnvironmentVariablesConfigurationProvider();
