@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovelCrawler.Common", "NovelCrawler.Common\NovelCrawler.Common.csproj", "{0BB62BC7-411D-4949-BC00-E9E189FA6800}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovelCrawler.Models", "NovelCrawler.Models\NovelCrawler.Models.csproj", "{6E0D989D-3032-4567-8F68-E304D87D3DB0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovelCrawler.Storage", "Storage\NovelCrawler.Storage\NovelCrawler.Storage.csproj", "{83AF3653-E0BE-4A21-B7A3-417EA5916345}"
@@ -21,16 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovelCrawler.TestConsole", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovelCrawler.Repository", "NovelCrawler.Repository\NovelCrawler.Repository.csproj", "{42FDFB6C-9147-4B56-9F37-6F6597918E05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovelCrawler.Infrastructure", "NovelCrawler.Infrastructure\NovelCrawler.Infrastructure.csproj", "{2DA80F51-3B68-4AC4-806A-D89E3F6FE959}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0BB62BC7-411D-4949-BC00-E9E189FA6800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BB62BC7-411D-4949-BC00-E9E189FA6800}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BB62BC7-411D-4949-BC00-E9E189FA6800}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB62BC7-411D-4949-BC00-E9E189FA6800}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6E0D989D-3032-4567-8F68-E304D87D3DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6E0D989D-3032-4567-8F68-E304D87D3DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E0D989D-3032-4567-8F68-E304D87D3DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,6 +51,10 @@ Global
 		{42FDFB6C-9147-4B56-9F37-6F6597918E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42FDFB6C-9147-4B56-9F37-6F6597918E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42FDFB6C-9147-4B56-9F37-6F6597918E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DA80F51-3B68-4AC4-806A-D89E3F6FE959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DA80F51-3B68-4AC4-806A-D89E3F6FE959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DA80F51-3B68-4AC4-806A-D89E3F6FE959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DA80F51-3B68-4AC4-806A-D89E3F6FE959}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace NovelCrawler.Common
+namespace NovelCrawler.Infrastructure
 {
     public class FileHelper
     {

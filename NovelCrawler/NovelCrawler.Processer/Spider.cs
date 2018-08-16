@@ -1,4 +1,5 @@
-﻿using NovelCrawler.Common;
+﻿
+using NovelCrawler.Infrastructure;
 using NovelCrawler.Models;
 using NovelCrawler.Processer.Models;
 using System;

@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Text;
 
-namespace NovelCrawler.Common
+namespace NovelCrawler.Infrastructure
 {
     public class HtmlHelper
     {

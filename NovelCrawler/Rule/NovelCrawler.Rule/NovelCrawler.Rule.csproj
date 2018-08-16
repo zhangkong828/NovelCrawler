@@ -104,9 +104,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NovelCrawler.Common\NovelCrawler.Common.csproj">
-      <Project>{0BB62BC7-411D-4949-BC00-E9E189FA6800}</Project>
-      <Name>NovelCrawler.Common</Name>
+    <ProjectReference Include="..\..\NovelCrawler.Infrastructure\NovelCrawler.Infrastructure.csproj">
+      <Project>{2da80f51-3b68-4ac4-806a-d89e3f6fe959}</Project>
+      <Name>NovelCrawler.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NovelCrawler.Models\NovelCrawler.Models.csproj">
       <Project>{6e0d989d-3032-4567-8f68-e304d87d3db0}</Project>
