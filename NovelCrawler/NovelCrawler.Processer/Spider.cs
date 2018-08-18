@@ -108,12 +108,12 @@ namespace NovelCrawler.Processer
             //最新列表地址
             var updateListHtml = HtmlHelper.Get(_rule.NovelUpdateListUrl);
             if (string.IsNullOrWhiteSpace(updateListHtml))
-                throw new Exception("最新列表地址无法访问");
+                throw new SpiderException("最新列表地址无法访问");
             //匹配正则
             var mc = Regex.Matches(updateListHtml, _rule.NovelUpdateList.Pattern);
             if (mc.Count <= 0)
             {
-                throw new Exception("更新列表规则匹配失败");
+                throw new SpiderException("更新列表规则匹配失败");
             }
             foreach (Match item in mc)
             {
@@ -122,7 +122,7 @@ namespace NovelCrawler.Processer
             }
             if (result.Count <= 0)
             {
-                throw new Exception("获取更新列表失败");
+                throw new SpiderException("获取更新列表失败");
             }
             return result;
         }
@@ -141,11 +141,11 @@ namespace NovelCrawler.Processer
             Logger.ColorConsole("NovelUrl:" + novelUrl);
             var novelInfoHtml = HtmlHelper.Get(novelUrl);
             if (string.IsNullOrWhiteSpace(novelInfoHtml))
-                throw new Exception("小说详情页无法访问");
+                throw new SpiderException("小说详情页无法访问");
             //匹配正则
             if (Regex.IsMatch(novelInfoHtml, _rule.NovelErr.Pattern))
             {
-                throw new Exception("匹配到小说页面错误标识，失败");
+                throw new SpiderException("匹配到小说页面错误标识，失败");
             }
             var info = new NovelDetails();
             info.Name = RegexMatch(_rule.NovelName, novelInfoHtml);
@@ -155,6 +155,11 @@ namespace NovelCrawler.Processer
             info.State = RegexMatch(_rule.NovelState, novelInfoHtml);
             info.Des = RegexMatch(_rule.NovelDes, novelInfoHtml);
             info.ChapterIndex = RegexMatch(_rule.ChapterIndex, novelInfoHtml); //章节目录
+
+            if (!Utils.ObjectIsNotNull<NovelDetails>(info, "Des", "ChapterIndex"))
+            {
+                throw new SpiderException("获取小说详情失败，有匹配不到的值");
+            }
             return info;
         }
 
@@ -175,13 +180,13 @@ namespace NovelCrawler.Processer
             var chapterListHtml = HtmlHelper.Get(chapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
-                throw new Exception("小说章节目录无法访问");
+                throw new SpiderException("小说章节目录无法访问");
             }
             var chapterNameMc = Regex.Matches(chapterListHtml, _rule.ChapterName.Pattern);
             var chapterUrlMc = Regex.Matches(chapterListHtml, _rule.ChapterUrl.Pattern);
             if (chapterNameMc.Count <= 0 || chapterUrlMc.Count <= 0 || chapterNameMc.Count != chapterUrlMc.Count)
             {
-                throw new Exception("获取小说章节失败");
+                throw new SpiderException("获取小说章节失败");
             }
             for (int i = 0; i < chapterNameMc.Count; i++)
             {
@@ -212,7 +217,7 @@ namespace NovelCrawler.Processer
             var chapterHtml = HtmlHelper.Get(contentUrl);
             if (Regex.IsMatch(chapterHtml, _rule.ContentErr.Pattern))
             {
-                throw new Exception("匹配到章节错误标识，失败");
+                throw new SpiderException("匹配到章节错误标识，失败");
             }
             content = RegexMatch(_rule.ContentText, chapterHtml);
             return content;
@@ -227,7 +232,7 @@ namespace NovelCrawler.Processer
                 if (!string.IsNullOrWhiteSpace(rule.Pattern) && Regex.IsMatch(html, rule.Pattern))
                 {
                     //匹配
-                    result = Regex.Match(html, rule.Pattern).Groups[1].Value;
+                    result = Regex.Match(html, rule.Pattern).Groups[1].Value.Trim();
                     //替换
                     result = ReplaceMatch(result, rule.Filter.OuterXml);
                 }

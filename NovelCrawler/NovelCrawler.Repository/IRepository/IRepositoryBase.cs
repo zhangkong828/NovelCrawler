@@ -28,7 +28,7 @@ namespace NovelCrawler.Repository.IRepository
 
         bool Exists(Expression<Func<T, bool>> expression);
 
-        long Count(Expression<Func<T, bool>> expression)
+        long Count(Expression<Func<T, bool>> expression);
     }
 }
 
