@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace NovelCrawler.Infrastructure.Configuration
 {

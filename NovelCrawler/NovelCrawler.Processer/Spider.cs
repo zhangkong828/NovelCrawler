@@ -132,7 +132,7 @@ namespace NovelCrawler.Processer
         /// </summary>
         /// <param name="novelKey"></param>
         /// <returns></returns>
-        public NovelInfo GetNovelInfo(string novelKey)
+        public NovelDetails GetNovelInfo(string novelKey)
         {
             //小说信息页url处理
             var novelUrl = _rule.NovelUrl.Replace("{NovelKey}", novelKey);
@@ -147,7 +147,7 @@ namespace NovelCrawler.Processer
             {
                 throw new Exception("匹配到小说页面错误标识，失败");
             }
-            var info = new NovelInfo();
+            var info = new NovelDetails();
             info.Name = RegexMatch(_rule.NovelName, novelInfoHtml);
             info.ImageUrl = RegexMatch(_rule.NovelImage, novelInfoHtml);
             info.Classify = RegexMatch(_rule.NovelClassify, novelInfoHtml);

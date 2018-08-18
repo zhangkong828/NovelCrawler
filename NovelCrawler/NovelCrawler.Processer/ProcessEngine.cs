@@ -1,4 +1,8 @@
-﻿using System;
+﻿using NovelCrawler.Infrastructure;
+using NovelCrawler.Models;
+using NovelCrawler.Repository.IRepository;
+using NovelCrawler.Repository.Repository;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,9 +14,13 @@ namespace NovelCrawler.Processer
         private static ProcessEngine _instance;
         private ProcessEngineOptions _options;
 
+        private INovelInfoRepository _novelInfoRepository;
+
         private ProcessEngine(ProcessEngineOptions options)
         {
             _options = options;
+
+            _novelInfoRepository = new NovelInfoRepository();
         }
 
         public static ProcessEngine Create(ProcessEngineOptions options = null)
@@ -41,6 +49,14 @@ namespace NovelCrawler.Processer
         }
 
 
-       
+        private void Process()
+        {
+            var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
+            var spider = new Spider(null, rule);
+            
+
+        }
+
+
     }
 }

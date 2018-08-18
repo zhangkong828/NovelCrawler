@@ -8,7 +8,7 @@ namespace NovelCrawler.Services
         static void Main(string[] args)
         {
 
-            var _constr = ConfigurationManager.GetValue("MongoDB:connectionString");
+            var _constr = ConfigurationManager.GetValue("MongoDB:connectionString1");
             var _dbName = ConfigurationManager.GetValue("MongoDB:defaultDBName");
             var _collectionName = ConfigurationManager.GetValue("MongoDB:defaultCollectionName");
 

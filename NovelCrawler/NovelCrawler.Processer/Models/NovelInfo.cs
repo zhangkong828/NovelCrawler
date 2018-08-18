@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NovelCrawler.Processer.Models
 {
-    public class NovelInfo
+    public class NovelDetails
     {
         public string Name { get; set; }
         public string ImageUrl { get; set; }
