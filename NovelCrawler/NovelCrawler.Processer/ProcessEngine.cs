@@ -1,5 +1,6 @@
 ﻿using NovelCrawler.Infrastructure;
 using NovelCrawler.Models;
+using NovelCrawler.Processer.Models;
 using NovelCrawler.Repository.IRepository;
 using NovelCrawler.Repository.Repository;
 using System;
@@ -68,11 +69,11 @@ namespace NovelCrawler.Processer
                     //判断是否已入库
                     if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author))
                     {
-                        ProcessUpdate(spider, novelKey, info.ChapterIndex);//更新
+                        ProcessUpdate(spider, novelKey, info);//更新
                     }
                     else
                     {
-                        ProcessAdd(spider, novelKey, info.ChapterIndex);//新增
+                        ProcessAdd(spider, novelKey, info);//新增
                     }
 
                 }
@@ -88,18 +89,38 @@ namespace NovelCrawler.Processer
         }
 
 
-        private void ProcessAdd(Spider spider, string novelKey, string chapterIndex)
+        private void ProcessAdd(Spider spider, string novelKey, NovelDetails info)
         {
+            //入库小说详情
+            var novelInfo = new NovelInfo()
+            {
+                Id = ObjectId.NextId(),
+                Name = info.Name,
+                Author = info.Author,
+                Sort = info.Sort,
+                State = info.State,
+                Des = info.Des,
+                Cover = spider.DownLoadImageToBase64(info.ImageUrl),
+                CreateTime = DateTime.Now,
+                UpdateTime = DateTime.Now,
+                LatestChapter = "",
+                LatestChapterId = ""
+            };
+            //_novelInfoRepository.Insert(novelInfo);
             //获取章节列表
-            //var chapterList = spider.GetNovelChapterList(novelKey, chapterIndex);
-            //写入索引
-            //抓取章节  因为有索引，所有章节都可并行无序抓取
-            //存储需要路由规则
+            var chapterList = spider.GetNovelChapterList(novelKey, info.ChapterIndex);
+            //写入目录索引
+            //抓取章节  单个抓取，不然容易被封
+            //章节内容 存储按路由规则分表
         }
 
-        private void ProcessUpdate(Spider spider, string novelKey, string chapterIndex)
+        private void ProcessUpdate(Spider spider, string novelKey, NovelDetails info)
         {
 
         }
+
+
+
+
     }
 }

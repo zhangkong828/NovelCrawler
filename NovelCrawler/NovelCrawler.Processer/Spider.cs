@@ -1,5 +1,5 @@
-﻿
-using NovelCrawler.Infrastructure;
+﻿using NovelCrawler.Infrastructure;
+using NovelCrawler.Infrastructure.Configuration;
 using NovelCrawler.Models;
 using NovelCrawler.Processer.Models;
 using System;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NovelCrawler.Processer
 {
@@ -14,11 +15,13 @@ namespace NovelCrawler.Processer
     {
         private ProcessEngineOptions _option;
         private RuleModel _rule;
+        private List<NovelSortSettings> _novelSorts;
 
         public Spider(ProcessEngineOptions option, RuleModel rule)
         {
             _rule = rule;
 
+            _novelSorts = ConfigurationManager.GetSection<List<NovelSortSettings>>("SpiderSettings:NovelSort");
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace NovelCrawler.Processer
                 var info = GetNovelInfo(novelKey);
                 Logger.ColorConsole(string.Format("Name:{0}", info.Name));
                 Logger.ColorConsole(string.Format("ImageUrl:{0}", info.ImageUrl));
-                Logger.ColorConsole(string.Format("Classify:{0}", info.Classify));
+                Logger.ColorConsole(string.Format("Sort:{0}", info.Sort));
                 Logger.ColorConsole(string.Format("Author:{0}", info.Author));
                 Logger.ColorConsole(string.Format("State:{0}", info.State));
                 Logger.ColorConsole(string.Format("Des:{0}", info.Des));
@@ -150,9 +153,9 @@ namespace NovelCrawler.Processer
             var info = new NovelDetails();
             info.Name = RegexMatch(_rule.NovelName, novelInfoHtml);
             info.ImageUrl = RegexMatch(_rule.NovelImage, novelInfoHtml);
-            info.Classify = RegexMatch(_rule.NovelClassify, novelInfoHtml);
+            info.Sort = RegexMatch(_rule.NovelClassify, novelInfoHtml);
             info.Author = RegexMatch(_rule.NovelAuthor, novelInfoHtml);
-            info.State = RegexMatch(_rule.NovelState, novelInfoHtml);
+            info.State = RegexIsMatch(_rule.NovelState, novelInfoHtml) ? 1 : 0;
             info.Des = RegexMatch(_rule.NovelDes, novelInfoHtml);
             info.ChapterIndex = RegexMatch(_rule.ChapterIndex, novelInfoHtml); //章节目录
 
@@ -223,6 +226,19 @@ namespace NovelCrawler.Processer
             return content;
         }
 
+        private bool RegexIsMatch(PatternItem rule, string html)
+        {
+            var result = false;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(rule.Pattern) && Regex.IsMatch(html, rule.Pattern))
+                {
+                    result = Regex.IsMatch(html, rule.Pattern);
+                }
+            }
+            catch { }
+            return result;
+        }
 
         private string RegexMatch(PatternItem rule, string html)
         {
@@ -263,5 +279,38 @@ namespace NovelCrawler.Processer
             return str;
         }
 
+        //入库才匹配分类
+        public string MatchSort(string str)
+        {
+            var sort = _novelSorts.LastOrDefault()?.Name;
+
+            if (string.IsNullOrWhiteSpace(str))
+                return sort;
+
+            foreach (var item in _novelSorts)
+            {
+                if (Regex.IsMatch(str.Trim(), item.Match))
+                {
+                    sort = item.Name;
+                    break;
+                }
+            }
+
+            return sort;
+        }
+
+        public byte[] DownLoadImage(string url)
+        {
+            return HtmlHelper.DownLoad(url);
+        }
+
+        public string DownLoadImageToBase64(string url)
+        {
+            var bytes = this.DownLoadImage(url);
+            if (bytes != null)
+                return Convert.ToBase64String(bytes);
+            else
+                return null;
+        }
     }
 }

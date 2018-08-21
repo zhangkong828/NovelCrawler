@@ -9,6 +9,50 @@ namespace NovelCrawler.Infrastructure
 {
     public class HtmlHelper
     {
+        public static byte[] DownLoad(string url)
+        {
+            int tryCount = 3;
+            GetImage:
+            try
+            {
+                WebClient client = new WebClient();
+                var result = client.DownloadData(url);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, url);
+                if (tryCount > 0)
+                {
+                    tryCount--;
+                    goto GetImage;
+                }
+                return null;
+            }
+        }
+
+        public static bool DownLoad(string url, string savePath)
+        {
+            int tryCount = 3;
+            GetImage:
+            try
+            {
+                WebClient client = new WebClient();
+                client.DownloadFile(url, savePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, url);
+                if (tryCount > 0)
+                {
+                    tryCount--;
+                    goto GetImage;
+                }
+                return false;
+            }
+        }
+
         public static string Get(string url, string cookie = null, string encodingStr = "UTF8")
         {
             var html = "";
@@ -29,18 +73,16 @@ namespace NovelCrawler.Infrastructure
                     request.Headers[HttpRequestHeader.Cookie] = cookie;
                 request.Timeout = 1000 * 10;
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36";
-                var response = (HttpWebResponse)request.GetResponse();
-                using (var sr = new StreamReader(response.GetResponseStream(), encoding))
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
-                    html = sr.ReadToEnd();
+                    html = GetResponseBody(response, encoding);
                 }
-                html = GetResponseBody(response, encoding);
                 isError = string.IsNullOrWhiteSpace(html);
             }
             catch (Exception ex)
             {
                 isError = true;
-                //log
+                Logger.Error(ex, url);
             }
             if (isError)
             {

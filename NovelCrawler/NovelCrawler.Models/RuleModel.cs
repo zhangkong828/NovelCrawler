@@ -60,7 +60,7 @@ namespace NovelCrawler.Models
         public PatternItem NovelDes { get; set; }
 
         [XmlElement(Order = 12)]
-        [RuleDescription("小说完结状态", "获得小说写作进程，可使用替换标签&&")]
+        [RuleDescription("小说完结状态", "匹配小说完结的状态，没有匹配到则都是未完成")]
         public PatternItem NovelState { get; set; }
 
 

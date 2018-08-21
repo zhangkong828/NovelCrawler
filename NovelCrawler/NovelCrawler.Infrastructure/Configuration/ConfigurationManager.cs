@@ -35,5 +35,10 @@ namespace NovelCrawler.Infrastructure.Configuration
         {
             return Configuration.GetValue<T>(key);
         }
+
+        public static T GetSection<T>(string key)
+        {
+            return Configuration.GetSection(key).Get<T>();
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace NovelCrawler.Models
         /// <summary>
         /// 小说分类
         /// </summary>
-        public string Classify { get; set; }
+        public string Sort { get; set; }
 
         /// <summary>
         /// 小说状态
