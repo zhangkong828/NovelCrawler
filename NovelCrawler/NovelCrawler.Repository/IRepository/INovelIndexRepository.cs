@@ -2,7 +2,7 @@
 
 namespace NovelCrawler.Repository.IRepository
 {
-    interface INovelIndexRepository : IRepositoryBase<NovelIndex>
+    public interface INovelIndexRepository : IRepositoryBase<NovelIndex>
     {
     }
 }

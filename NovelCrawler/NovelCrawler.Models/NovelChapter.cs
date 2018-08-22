@@ -26,7 +26,7 @@ namespace NovelCrawler.Models
         /// <summary>
         /// 字数
         /// </summary>
-        public string WordCount { get; set; }
+        public int WordCount { get; set; }
 
         /// <summary>
         /// 章节内容

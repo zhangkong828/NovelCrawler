@@ -1,4 +1,5 @@
 ﻿using NovelCrawler.Infrastructure;
+using NovelCrawler.Infrastructure.Router;
 using NovelCrawler.Models;
 using NovelCrawler.Processer.Models;
 using NovelCrawler.Repository.IRepository;
@@ -17,12 +18,14 @@ namespace NovelCrawler.Processer
         private ProcessEngineOptions _options;
 
         private INovelInfoRepository _novelInfoRepository;
+        private INovelChapterRepository _novelChapterRepository;
 
         private ProcessEngine(ProcessEngineOptions options)
         {
             _options = options;
 
             _novelInfoRepository = new NovelInfoRepository();
+            _novelChapterRepository = new NovelChapterRepository();
         }
 
         public static ProcessEngine Create(ProcessEngineOptions options = null)
@@ -91,26 +94,48 @@ namespace NovelCrawler.Processer
 
         private void ProcessAdd(Spider spider, string novelKey, NovelDetails info)
         {
+            var chapterIndex = info.ChapterIndex;
+            var novelId = ObjectId.NextId();
+            var novelCover = spider.DownLoadImageToBase64(info.ImageUrl);
             //入库小说详情
             var novelInfo = new NovelInfo()
             {
-                Id = ObjectId.NextId(),
+                Id = novelId,
                 Name = info.Name,
                 Author = info.Author,
                 Sort = info.Sort,
                 State = info.State,
                 Des = info.Des,
-                Cover = spider.DownLoadImageToBase64(info.ImageUrl),
+                Cover = novelCover,
                 CreateTime = DateTime.Now,
                 UpdateTime = DateTime.Now,
                 LatestChapter = "",
                 LatestChapterId = ""
             };
-            //_novelInfoRepository.Insert(novelInfo);
+            _novelInfoRepository.Insert(novelInfo);
             //获取章节列表
-            var chapterList = spider.GetNovelChapterList(novelKey, info.ChapterIndex);
-            //写入目录索引
+            var chapterList = spider.GetNovelChapterList(novelKey, chapterIndex);
+            //抓完在写 目录索引
+            //获取分片id
+            var shardingId = Route.GetShardingId(novelId);
             //抓取章节  单个抓取，不然容易被封
+            var indexex = new List<Index>();
+            for (int i = 0; i < chapterList.Count; i++)
+            {
+                var chapter = chapterList[i];
+                var content = spider.GetContent(novelKey, chapterIndex, chapter.Value);
+                var chapterEntity = new NovelChapter()
+                {
+                    Id = ObjectId.NextId(),
+                    NovelId = novelId,
+                    ChapterName = chapter.Key,
+                    UpdateTime = DateTime.Now,
+                    WordCount = 0,
+                    Content = content
+                };
+
+                _novelChapterRepository.Insert(novelId, chapterEntity);
+            }
             //章节内容 存储按路由规则分表
         }
 
