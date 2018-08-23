@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NovelCrawler.Processer
 {
@@ -19,6 +20,7 @@ namespace NovelCrawler.Processer
         private ProcessEngineOptions _options;
 
         private INovelInfoRepository _novelInfoRepository;
+        private INovelIndexRepository _novelIndexRepository;
         private INovelChapterRepository _novelChapterRepository;
 
         private ProcessEngine(ProcessEngineOptions options)
@@ -26,6 +28,7 @@ namespace NovelCrawler.Processer
             _options = options;
 
             _novelInfoRepository = new NovelInfoRepository();
+            _novelIndexRepository = new NovelIndexRepository();
             _novelChapterRepository = new NovelChapterRepository();
         }
 
@@ -46,7 +49,7 @@ namespace NovelCrawler.Processer
 
         public void Start()
         {
-
+            Process();
         }
 
         public void Stop()
@@ -96,32 +99,21 @@ namespace NovelCrawler.Processer
         private void ProcessAdd(Spider spider, string novelKey, NovelDetails info)
         {
             var chapterIndex = info.ChapterIndex;
-
+            //小说id
             var novelId = ObjectId.NextId();
-            var novelCover = spider.DownLoadImageToBase64(info.ImageUrl);
-            //入库小说详情
-            var novelInfo = new NovelInfo()
-            {
-                Id = novelId,
-                Name = info.Name,
-                Author = info.Author,
-                Sort = info.Sort,
-                State = info.State,
-                Des = info.Des,
-                Cover = novelCover,
-                CreateTime = DateTime.Now,
-                UpdateTime = DateTime.Now,
-                LatestChapter = "",
-                LatestChapterId = ""
-            };
-            _novelInfoRepository.Insert(novelInfo);
-            //获取章节列表
-            var chapterList = spider.GetNovelChapterList(novelKey, chapterIndex);
-            //抓完在写 目录索引
-            //获取分片id
+            //分片id
             var shardingId = Route.GetShardingId(novelId);
-            //抓取章节  单个抓取，不然容易被封
+            //目录索引id
+            var novelIndexId = ObjectId.NextId();
+            //小说封面
+            var novelCover = spider.DownLoadImageToBase64(info.ImageUrl);
+
+            /*
+             * 1 >>> 获取章节列表
+             */
+            var chapterList = spider.GetNovelChapterList(novelKey, chapterIndex);
             var indexes = new List<Index>();
+            //抓取章节  单个抓取 需要延迟 不然容易被封
             for (int i = 0; i < chapterList.Count; i++)
             {
                 var chapter = chapterList[i];
@@ -146,12 +138,43 @@ namespace NovelCrawler.Processer
                 {
                     Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
                     //单章节 抓取失败
-                    //todo
+                    //todo 策略？ 1.终止  2.跳过失败章节 
                 }
             }
 
-            //章节内容 存储按路由规则分表
+            /*
+             * 2 >>> 写入索引目录
+             */
+            var novelIndex = new NovelIndex()
+            {
+                Id = novelIndexId,
+                NovelId = novelId,
+                UpdateTime = DateTime.Now,
+                Indexex = indexes
+            };
+            _novelIndexRepository.Insert(novelIndex);
+
+            /*
+             * 3 >>> 写入小说详情
+             */
+            var novelInfo = new NovelInfo()
+            {
+                Id = novelId,
+                Name = info.Name,
+                Author = info.Author,
+                Sort = info.Sort,
+                State = info.State,
+                Des = info.Des,
+                Cover = novelCover,
+                CreateTime = DateTime.Now,
+                UpdateTime = DateTime.Now,
+                LatestChapter = indexes.LastOrDefault()?.ChapterName,
+                LatestChapterId = indexes.LastOrDefault()?.ChapterId,
+                IndexId = novelIndexId
+            };
+            _novelInfoRepository.Insert(novelInfo);
         }
+
 
         private void ProcessUpdate(Spider spider, string novelKey, NovelDetails info)
         {

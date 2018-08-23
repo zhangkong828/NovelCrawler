@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NovelCrawler.Repository.Repository
 {
-    class NovelIndexRepository : RepositoryBase<NovelIndex>, INovelIndexRepository
+    public class NovelIndexRepository : RepositoryBase<NovelIndex>, INovelIndexRepository
     {
         public NovelIndexRepository() : base("novel", "indexes")
         {

@@ -59,5 +59,10 @@ namespace NovelCrawler.Models
         /// 最新章节地址
         /// </summary>
         public string LatestChapterId { get; set; }
+
+        /// <summary>
+        /// 目录索引Id
+        /// </summary>
+        public string IndexId { get; set; }
     }
 }

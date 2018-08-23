@@ -38,7 +38,20 @@ namespace NovelCrawler.Repository
             _constr = ConfigurationManager.GetValue("MongoDB:connectionString");
             _dbName = ConfigurationManager.GetValue("MongoDB:defaultDBName");
             _collectionName = ConfigurationManager.GetValue("MongoDB:defaultCollectionName");
-            _client = new MongoClient(_constr);
+
+            //测试连接
+            try
+            {
+                _client = new MongoClient(_constr);
+
+                var dbs = _client.ListDatabaseNames().ToList();
+                Console.WriteLine(dbs.Count);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Mongodb连接失败：{0}\r\n{1}", ex.Message, ex.StackTrace));
+            }
+
         }
 
         public IMongoDatabase GetDb()
