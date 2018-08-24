@@ -74,24 +74,6 @@ namespace NovelCrawler.Processer
         {
             try
             {
-                //获取更新列表
-                GetUpdateList();
-                //并行抓取
-                //Parallel.ForEach(_novelKeys, (key, state) =>
-                //{
-                //    //检测库里是否存在
-                //    if (false)
-                //    {
-                //        //更新
-                //        //检测最新章节
-
-                //    }
-                //    else
-                //    {
-                //        //新增
-
-                //    }
-                //});
 
             }
             catch (Exception ex)
@@ -141,7 +123,7 @@ namespace NovelCrawler.Processer
             var novelUrl = _rule.NovelUrl.Replace("{NovelKey}", novelKey);
             if (!novelUrl.Contains(_rule.SiteUrl))
                 novelUrl = UtilityHelper.Combine(_rule.SiteUrl, novelUrl);
-            Logger.ColorConsole("NovelUrl:" + novelUrl);
+            Logger.ColorConsole("抓取小说详情:" + novelUrl);
             var novelInfoHtml = await HtmlHelper.Get(novelUrl);
             if (string.IsNullOrWhiteSpace(novelInfoHtml))
                 throw new SpiderException("小说详情页无法访问");
@@ -179,7 +161,7 @@ namespace NovelCrawler.Processer
             var chapterList = _rule.ChapterList.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex);
             if (!chapterList.Contains(_rule.SiteUrl))
                 chapterList = UtilityHelper.Combine(_rule.SiteUrl, chapterList);
-            Logger.ColorConsole("ChapterList:" + chapterList);
+            Logger.ColorConsole("抓取章节目录:" + chapterList);
             var chapterListHtml = await HtmlHelper.Get(chapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
@@ -216,7 +198,7 @@ namespace NovelCrawler.Processer
             var contentUrl = _rule.ContentUrl.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex).Replace("{ChapterKey}", chapterKey);
             if (!contentUrl.Contains(_rule.SiteUrl))
                 contentUrl = UtilityHelper.Combine(_rule.SiteUrl, contentUrl);
-            Logger.ColorConsole("ContentUrl:" + contentUrl);
+            Logger.ColorConsole("抓取章节内容:" + contentUrl);
             var chapterHtml = await HtmlHelper.Get(contentUrl);
             if (Regex.IsMatch(chapterHtml, _rule.ContentErr.Pattern))
             {

@@ -73,5 +73,97 @@ namespace NovelCrawler.Infrastructure
         }
 
 
+        /// <summary>  
+        /// 字符串相似度 编辑距离（Levenshtein Distance）  
+        /// </summary>  
+        /// <param name="source">源串</param>  
+        /// <param name="target">目标串</param>  
+        /// <param name="similarity">输出：相似度，值在0～１</param>  
+        /// <param name="isCaseSensitive">是否大小写敏感</param>  
+        /// <returns>源串和目标串之间的编辑距离</returns>  
+        public static int LevenshteinDistance(string source, string target, out double similarity, bool isCaseSensitive = false)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                if (string.IsNullOrEmpty(target))
+                {
+                    similarity = 1;
+                    return 0;
+                }
+                else
+                {
+                    similarity = 0;
+                    return target.Length;
+                }
+            }
+            else if (string.IsNullOrEmpty(target))
+            {
+                similarity = 0;
+                return source.Length;
+            }
+
+            string From, To;
+            if (isCaseSensitive)
+            {   // 大小写敏感  
+                From = source;
+                To = target;
+            }
+            else
+            {   // 大小写无关  
+                From = source.ToLower();
+                To = target.ToLower();
+            }
+
+            // 初始化  
+            int m = From.Length;
+            int n = To.Length;
+            int[,] H = new int[m + 1, n + 1];
+            for (int i = 0; i <= m; i++) H[i, 0] = i;  // 注意：初始化[0,0]  
+            for (int j = 1; j <= n; j++) H[0, j] = j;
+
+            // 迭代  
+            for (int i = 1; i <= m; i++)
+            {
+                char SI = From[i - 1];
+                for (int j = 1; j <= n; j++)
+                {   // 删除（deletion） 插入（insertion） 替换（substitution）  
+                    if (SI == To[j - 1])
+                        H[i, j] = H[i - 1, j - 1];
+                    else
+                        H[i, j] = Math.Min(H[i - 1, j - 1], Math.Min(H[i - 1, j], H[i, j - 1])) + 1;
+                }
+            }
+
+            // 计算相似度  
+            int MaxLength = Math.Max(m, n);   // 两字符串的最大长度  
+            similarity = ((double)(MaxLength - H[m, n])) / MaxLength;
+
+            return H[m, n];    // 编辑距离  
+        }
+
+        /// <summary>
+        /// 替换特殊字符
+        /// </summary>
+        /// <returns></returns>
+        private static string ReplaceSpechars(string str)
+        {
+            return Regex.Replace(str.Replace(" ", ""), "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）|{}【】；‘’，。！/*-+]+", "", RegexOptions.IgnoreCase);
+        }
+
+        /// <summary>
+        /// 将'章'前面的数字替换为汉字数字
+        /// </summary>
+        public static void ReplaceNumberToChinese(string str)
+        {
+            var reg = new Regex("(\\d.+?)章");
+            if (reg.IsMatch(str))
+            {
+                var s = reg.Match(str).Groups[1].Value;
+                int.TryParse(s, out int num);
+                Console.WriteLine(num);
+            }
+            Convert.
+        }
+
     }
 }

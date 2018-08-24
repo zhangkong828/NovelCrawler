@@ -45,7 +45,10 @@ namespace NovelCrawler.Repository
                 _client = new MongoClient(_constr);
 
                 var dbs = _client.ListDatabaseNames().ToList();
-                Console.WriteLine(dbs.Count);
+                if (dbs.Count == 0)
+                {
+                    throw new Exception("Mongodb Database Count:0");
+                }
             }
             catch (Exception ex)
             {
