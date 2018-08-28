@@ -189,22 +189,43 @@ namespace NovelCrawler.Processer
         }
 
         /// <summary>
-        /// 章节列表对比
+        /// 章节列表是否需要更新
         /// </summary>
-        private bool ChapterListComparison(List<string> oldIndexes, List<string> newIndexes, out int num)
+        private bool ChapterListNeedUpdate(List<string> oldIndexes, List<string> newIndexes, out int num)
         {
+            double similarity;
             num = 0;
-            if (oldIndexes == null)
+            if (oldIndexes == null || oldIndexes.Count == 0)
                 return true;
-            for (int i = 0; i < newIndexes.Count; i++)
+            //对比 最后一章
+            for (int i = newIndexes.Count - 1; i >= 0; i++)
             {
-
+                var oldChapter = oldIndexes.LastOrDefault();
+                var newChapter = newIndexes[i];
+                if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
+                {
+                    num = i;
+                    return !(num == newIndexes.Count - 1);//如果是最后一章 不更新
+                }
             }
-            if (oldIndexes.Count < newIndexes.Count)
+
+            //对比 倒数第二章
+            if (oldIndexes.Count >= 2)
             {
-
+                for (int i = newIndexes.Count - 1; i >= 0; i++)
+                {
+                    var oldChapter = oldIndexes[oldIndexes.Count - 2];
+                    var newChapter = newIndexes[i];
+                    if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
+                    {
+                        num = i;
+                        return !(num == newIndexes.Count - 1);//如果是最后一章 不更新
+                    }
+                }
             }
 
+            //如果库里有数据，是一定不会到这里！除非一章都没对上
+            Logger.Error("章节列表对比失败！");
             return false;
         }
 

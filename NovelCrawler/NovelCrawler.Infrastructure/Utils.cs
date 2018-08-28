@@ -166,7 +166,7 @@ namespace NovelCrawler.Infrastructure
         }
 
         /// <summary>
-        /// 将'章'前面的数字替换为汉字数字
+        /// 将'章'前面的数字替换为汉字数字，没有匹配到就原样返回
         /// </summary>
         private static string ReplaceNumberToChinese(string str)
         {
