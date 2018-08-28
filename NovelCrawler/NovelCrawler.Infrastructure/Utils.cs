@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NovelCrawler.Infrastructure.Extension;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,6 +74,20 @@ namespace NovelCrawler.Infrastructure
         }
 
 
+        public static bool CompareChapter(string text1, string text2, out double similarity)
+        {
+            similarity = 0;
+            if (string.IsNullOrWhiteSpace(text1) || string.IsNullOrWhiteSpace(text2))
+                return false;
+            //字符串特殊处理
+            text1 = ReplaceNumberToChinese(ReplaceSpechars(text1));
+            text2 = ReplaceNumberToChinese(ReplaceSpechars(text2));
+
+            LevenshteinDistance(text1, text2, out similarity);
+
+            return similarity > 0.8;//相似度大于80% 则认为相同
+        }
+
         /// <summary>  
         /// 字符串相似度 编辑距离（Levenshtein Distance）  
         /// </summary>  
@@ -81,7 +96,7 @@ namespace NovelCrawler.Infrastructure
         /// <param name="similarity">输出：相似度，值在0～１</param>  
         /// <param name="isCaseSensitive">是否大小写敏感</param>  
         /// <returns>源串和目标串之间的编辑距离</returns>  
-        public static int LevenshteinDistance(string source, string target, out double similarity, bool isCaseSensitive = false)
+        private static int LevenshteinDistance(string source, string target, out double similarity, bool isCaseSensitive = false)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -153,16 +168,19 @@ namespace NovelCrawler.Infrastructure
         /// <summary>
         /// 将'章'前面的数字替换为汉字数字
         /// </summary>
-        public static void ReplaceNumberToChinese(string str)
+        private static string ReplaceNumberToChinese(string str)
         {
-            var reg = new Regex("(\\d.+?)章");
+            var reg = new Regex("(\\d+?)章");
             if (reg.IsMatch(str))
             {
                 var s = reg.Match(str).Groups[1].Value;
-                int.TryParse(s, out int num);
-                Console.WriteLine(num);
+                if (int.TryParse(s, out int num))
+                {
+                    var numStr = ConvertExtension.ConvertNumberToChinese(num);
+                    return str.Replace(s, numStr);
+                }
             }
-            Convert.
+            return str;
         }
 
     }
