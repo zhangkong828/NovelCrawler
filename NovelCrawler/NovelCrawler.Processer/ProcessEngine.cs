@@ -131,7 +131,7 @@ namespace NovelCrawler.Processer
                     };
                     _novelChapterRepository.Insert(novelId, chapterEntity);
                     indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });//索引目录
-                    Thread.Sleep(200);
+                    Thread.Sleep(500);
                 }
                 catch (Exception ex)
                 {
@@ -182,9 +182,54 @@ namespace NovelCrawler.Processer
             if (novelInfo == null)
                 return;
             //对比章节，判断是否需要新增
-            var oldIndexes = _novelIndexRepository.FindOrDefault(x => x.Id == novelInfo.IndexId)?.Indexex.Select(x => x.ChapterName).ToList();
-            var chapterList = await spider.GetNovelChapterList(novelKey, chapterIndex);
-            var newIndexes = chapterList.Select(x => x.Key).ToList();
+            var oldIndexes = _novelIndexRepository.FindOrDefault(x => x.Id == novelInfo.IndexId);//老索引
+            var oldChapterList = oldIndexes?.Indexex.Select(x => x.ChapterName).ToList();//老的章节列表
+            var chapterList = await spider.GetNovelChapterList(novelKey, chapterIndex);//抓取最新章节
+            var newChapterList = chapterList.Select(x => x.Key).ToList();//新的章节列表
+            int updateIndex = 0;
+
+            if (ChapterListNeedUpdate(oldChapterList, newChapterList, out updateIndex))
+            {
+                var indexes = new List<Index>();//更新的列表
+                //更新章节
+                for (int i = updateIndex; i < chapterList.Count; i++)
+                {
+                    var chapter = chapterList[i];
+                    try
+                    {
+                        var content = await spider.GetContent(novelKey, chapterIndex, chapter.Value);
+                        var chapterId = ObjectId.NextId();
+                        var chapterEntity = new NovelChapter()
+                        {
+                            Id = chapterId,
+                            NovelId = novelInfo.Id,
+                            ChapterName = chapter.Key,
+                            UpdateTime = DateTime.Now,
+                            WordCount = Utils.GetWordCount(content),
+                            Content = content
+                        };
+                        _novelChapterRepository.Insert(novelInfo.Id, chapterEntity);
+                        indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });//索引目录
+                        Thread.Sleep(500);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
+                        //单章节 抓取失败
+                        //todo 策略？ 1.终止  2.跳过失败章节 
+                    }
+                }
+                //更新索引目录
+                oldIndexes.Indexex.AddRange(indexes);
+                _novelIndexRepository.Update(x => x.Id == oldIndexes.Id, oldIndexes);
+                //更新小说详情
+                novelInfo.State = info.State;
+                novelInfo.UpdateTime = DateTime.Now;
+                novelInfo.LatestChapter = oldIndexes.Indexex.LastOrDefault()?.ChapterName;
+                novelInfo.LatestChapterId = oldIndexes.Indexex.LastOrDefault()?.ChapterId;
+                _novelInfoRepository.Update(x => x.Id == novelInfo.Id, novelInfo);
+            }
+
 
         }
 
@@ -204,8 +249,8 @@ namespace NovelCrawler.Processer
                 var newChapter = newIndexes[i];
                 if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
                 {
-                    num = i;
-                    return !(num == newIndexes.Count - 1);//如果是最后一章 不更新
+                    num = i + 1;
+                    return !(i == newIndexes.Count - 1);//如果是最后一章 不更新
                 }
             }
 
@@ -218,8 +263,8 @@ namespace NovelCrawler.Processer
                     var newChapter = newIndexes[i];
                     if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
                     {
-                        num = i;
-                        return !(num == newIndexes.Count - 1);//如果是最后一章 不更新
+                        num = i + 1;
+                        return !(i == newIndexes.Count - 1);//如果是最后一章 不更新
                     }
                 }
             }
