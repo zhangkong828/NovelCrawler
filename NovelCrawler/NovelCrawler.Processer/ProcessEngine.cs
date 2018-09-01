@@ -158,13 +158,13 @@ namespace NovelCrawler.Processer
                      }
                      catch (SpiderException ex)
                      {
-                         Logger.Error("{0}，{1} 小说详情抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
+                         Logger.Error("{0}，{1} 抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
                      }
                  });
             }
             catch (SpiderException ex)
             {
-                Logger.Error("{0} 小说更新列表抓取失败：{1}", rule.SiteUrl, ex.Message);
+                Logger.Error("{0} 抓取失败：{1}", rule.SiteUrl, ex.Message);
             }
 
             catch (Exception ex)
