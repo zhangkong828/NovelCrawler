@@ -10,14 +10,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
 
 namespace NovelCrawler.Processer
 {
     public class ProcessEngine
     {
         private static readonly object _obj = new object();
+        private static readonly string _ruleDirectoryPath = AppDomain.CurrentDomain.BaseDirectory + "Rules";
+        private static readonly CancellationTokenSource _cancellation = new CancellationTokenSource();
+
         private static ProcessEngine _instance;
         private ProcessEngineOptions _options;
+        private CancellationToken _cancellationToken;
 
         private INovelInfoRepository _novelInfoRepository;
         private INovelIndexRepository _novelIndexRepository;
@@ -26,6 +31,8 @@ namespace NovelCrawler.Processer
         private ProcessEngine(ProcessEngineOptions options)
         {
             _options = options;
+            _cancellationToken = _cancellation.Token;
+            _cancellationToken.Register(() => { Logger.Info("正在取消任务..."); });
 
             _novelInfoRepository = new NovelInfoRepository();
             _novelIndexRepository = new NovelIndexRepository();
@@ -49,51 +56,121 @@ namespace NovelCrawler.Processer
 
         public void Start()
         {
-            Process();
+            var rules = LoadRules();
+            if (rules == null || rules.Count == 0)
+                return;
+
+            foreach (var item in rules)
+            {
+                var rule = item.Value;
+                var task = Task.Run(async () =>
+                  {
+                      while (true)
+                      {
+                          try
+                          {
+                              _cancellationToken.ThrowIfCancellationRequested();
+                              await Process(rule);
+                          }
+                          catch (Exception ex)
+                          {
+                              if (ex is OperationCanceledException)
+                              {
+                                  Logger.Info("{0} 已取消", rule.SiteUrl);
+                                  break;
+                              }
+                          }
+                          finally
+                          {
+
+                          }
+
+                      }
+                  }, _cancellationToken);
+            }
         }
 
         public void Stop()
         {
-
+            _cancellation.Cancel();
         }
 
-
-        private async Task Process()
+        private Dictionary<string, RuleModel> LoadRules()
         {
-            var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
+            var _rules = new Dictionary<string, RuleModel>();
+            if (!Directory.Exists(_ruleDirectoryPath))
+            {
+                throw new Exception("Rules目录不存在");
+            }
+
+            var files = Directory.GetFiles(_ruleDirectoryPath, "*.xml");
+            if (files.Length == 0)
+            {
+                Logger.Info("Rules目录下未找到相关xml规则文件");
+                return null;
+            }
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    var filename = Path.GetFileName(file);
+                    if (_rules.ContainsKey(filename))
+                    {
+                        Logger.Info("出现同名xml规则，忽略");
+                        continue;
+                    }
+                    var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>(file, Encoding.UTF8);
+                    _rules.Add(filename, rule);
+                }
+                catch { }
+            }
+
+            return _rules;
+        }
+
+        private async Task Process(RuleModel rule)
+        {
             var spider = new Spider(null, rule);
 
-            //获取更新列表
-            var novelKeys = await spider.GetUpdateList();
+            try
+            {
+                //获取更新列表
+                var novelKeys = await spider.GetUpdateList();
 
-            //并行抓取
-            Parallel.ForEach(novelKeys, async (novelKey, loopState) =>
-             {
-                 try
+                //并行抓取
+                Parallel.ForEach(novelKeys, async (novelKey, loopState) =>
                  {
-                     //获取小说详情
-                     var info = await spider.GetNovelInfo(novelKey);
-                     //判断是否已入库
-                     if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author))
+                     try
                      {
-                         await ProcessUpdate(spider, novelKey, info);//更新
-                     }
-                     else
-                     {
-                         await ProcessAdd(spider, novelKey, info);//新增
-                     }
+                         //获取小说详情
+                         var info = await spider.GetNovelInfo(novelKey);
+                         //判断是否已入库
+                         if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author))
+                         {
+                             await ProcessUpdate(spider, novelKey, info);//更新
+                         }
+                         else
+                         {
+                             await ProcessAdd(spider, novelKey, info);//新增
+                         }
 
-                 }
-                 catch (SpiderException ex)
-                 {
-                     Logger.Error("{0}，{1} 小说详情抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
-                 }
-                 catch (Exception ex)
-                 {
-                     Logger.Fatal(ex, "ProcessEngine.Process");
-                 }
-             });
-            Logger.ColorConsole("本次抓取结束");
+                     }
+                     catch (SpiderException ex)
+                     {
+                         Logger.Error("{0}，{1} 小说详情抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
+                     }
+                 });
+            }
+            catch (SpiderException ex)
+            {
+                Logger.Error("{0} 小说更新列表抓取失败：{1}", rule.SiteUrl, ex.Message);
+            }
+
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "ProcessEngine.Process");
+            }
         }
 
 
@@ -138,6 +215,8 @@ namespace NovelCrawler.Processer
                     Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
                     //单章节 抓取失败
                     //todo 策略？ 1.终止  2.跳过失败章节 
+                    Logger.ColorConsole2(string.Format("{0}-{1} 小说章节抓取失败，已终止", chapter.Key, chapter.Value, ex.Message));
+                    break;
                 }
             }
 
@@ -161,7 +240,7 @@ namespace NovelCrawler.Processer
                 Id = novelId,
                 Name = info.Name,
                 Author = info.Author,
-                Sort = info.Sort,
+                Sort = spider.MatchSort(info.Sort),
                 State = info.State,
                 Des = info.Des,
                 Cover = novelCover,
@@ -217,6 +296,8 @@ namespace NovelCrawler.Processer
                         Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
                         //单章节 抓取失败
                         //todo 策略？ 1.终止  2.跳过失败章节 
+                        Logger.ColorConsole2(string.Format("{0}-{1} 小说章节抓取失败，已终止", chapter.Key, chapter.Value, ex.Message));
+                        break;
                     }
                 }
                 //更新索引目录
