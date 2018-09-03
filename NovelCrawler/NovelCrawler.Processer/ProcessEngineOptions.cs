@@ -6,6 +6,12 @@ namespace NovelCrawler.Processer
 {
     public class ProcessEngineOptions
     {
+        public ProcessEngineOptions()
+        {
+            SpiderIntervalTime = new TimeSpan(0, 5, 0);
+            SpiderOptions = new SpiderOptions();
+        }
+
         public TimeSpan SpiderIntervalTime { get; set; }
 
         public SpiderOptions SpiderOptions { get; set; }
@@ -13,6 +19,14 @@ namespace NovelCrawler.Processer
 
     public class SpiderOptions
     {
+        public SpiderOptions()
+        {
+            添加新书 = true;
+            自动更新连载状态 = true;
+            自动更新分类 = true;
+            错误章节处理 = 错误章节处理.停止本书_继续采集下一本;
+        }
+
         public bool 添加新书 { get; set; }
 
         public bool 不处理已完成小说 { get; set; }
@@ -31,10 +45,11 @@ namespace NovelCrawler.Processer
 
         public List<string> 文字广告集合 { get; set; }
 
+        public 错误章节处理 错误章节处理 { get; set; }
     }
 
 
-    public enum 错误章节处理方式
+    public enum 错误章节处理
     {
         入库章节名_继续采集下一章 = 0,
         跳过本章_继续采集下一章 = 1,
