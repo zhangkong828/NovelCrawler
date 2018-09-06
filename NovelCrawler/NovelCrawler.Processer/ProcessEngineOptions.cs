@@ -22,7 +22,6 @@ namespace NovelCrawler.Processer
         public SpiderOptions()
         {
             添加新书 = true;
-            自动更新连载状态 = true;
             自动更新分类 = true;
             错误章节处理 = 错误章节处理.停止本书_继续采集下一本;
         }
@@ -34,8 +33,6 @@ namespace NovelCrawler.Processer
         public bool 强制清空重采 { get; set; }
 
         public bool 自动更新封面 { get; set; }
-
-        public bool 自动更新连载状态 { get; set; }
 
         public bool 自动更新分类 { get; set; }
 

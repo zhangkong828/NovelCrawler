@@ -82,7 +82,9 @@ namespace NovelCrawler.Processer
                           }
                           finally
                           {
-
+                              var milliSeconds = (int)_options.SpiderIntervalTime.TotalMilliseconds;
+                              milliSeconds = milliSeconds <= 0 ? 60000 : milliSeconds;
+                              Thread.Sleep(milliSeconds);
                           }
 
                       }
@@ -143,16 +145,26 @@ namespace NovelCrawler.Processer
                  {
                      try
                      {
+                         var model = new NovelInfo();
                          //获取小说详情
                          var info = await spider.GetNovelInfo(novelKey);
                          //判断是否已入库
-                         if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author))
+                         if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author, out model))
                          {
-                             await ProcessUpdate(spider, novelKey, info);//更新
+                             if (model.State == 1 && _options.SpiderOptions.不处理已完成小说)
+                                 return;
+
+                             if (_options.SpiderOptions.强制清空重采)
+                             {
+                                 //todo
+                             }
+
+                             await ProcessUpdate(spider, novelKey, info, model);//更新
                          }
                          else
                          {
-                             await ProcessAdd(spider, novelKey, info);//新增
+                             if (_options.SpiderOptions.添加新书)
+                                 await ProcessAdd(spider, novelKey, info);//新增
                          }
 
                      }
@@ -254,7 +266,7 @@ namespace NovelCrawler.Processer
         }
 
 
-        private async Task ProcessUpdate(Spider spider, string novelKey, NovelDetails info)
+        private async Task ProcessUpdate(Spider spider, string novelKey, NovelDetails info, NovelInfo model)
         {
             var chapterIndex = info.ChapterIndex;
             var novelInfo = _novelInfoRepository.FindOrDefault(x => x.Name == info.Name && x.Author == info.Author);
@@ -270,7 +282,7 @@ namespace NovelCrawler.Processer
             if (ChapterListNeedUpdate(oldChapterList, newChapterList, out updateIndex))
             {
                 var indexes = new List<Index>();//更新的列表
-                //更新章节
+                                                //更新章节
                 for (int i = updateIndex; i < chapterList.Count; i++)
                 {
                     var chapter = chapterList[i];
@@ -308,6 +320,14 @@ namespace NovelCrawler.Processer
                 novelInfo.UpdateTime = DateTime.Now;
                 novelInfo.LatestChapter = oldIndexes.Indexex.LastOrDefault()?.ChapterName;
                 novelInfo.LatestChapterId = oldIndexes.Indexex.LastOrDefault()?.ChapterId;
+
+                if (_options.SpiderOptions.自动更新分类)
+                    novelInfo.Sort = spider.MatchSort(info.Sort);
+                if (_options.SpiderOptions.自动更新封面)
+                    novelInfo.Cover = spider.DownLoadImageToBase64(info.ImageUrl);
+                if (_options.SpiderOptions.自动更新简介)
+                    novelInfo.Des = info.Des;
+
                 _novelInfoRepository.Update(x => x.Id == novelInfo.Id, novelInfo);
             }
 
@@ -355,6 +375,20 @@ namespace NovelCrawler.Processer
             return false;
         }
 
+
+        private string ProcessContent(string content)
+        {
+            if (!_options.SpiderOptions.入库章节时是否添加文字广告)
+                return content;
+
+            if (_options.SpiderOptions.文字广告集合.Count == 0)
+                return content;
+
+
+            //todo
+
+            return content;
+        }
 
     }
 }

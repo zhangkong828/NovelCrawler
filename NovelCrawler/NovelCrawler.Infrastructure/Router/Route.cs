@@ -11,11 +11,30 @@ namespace NovelCrawler.Infrastructure.Router
         /// </summary>
         public static string GetShardingId(string id)
         {
-            //long.TryParse(id, out long LId);
-            //return (LId % 8).ToString();
-
-            var hashcode =Math.Abs(id.GetHashCode());
+            var hashcode = GetStringHashcode(id);
             return (hashcode % 8).ToString();
+        }
+
+        /// <summary>
+        /// 返回平台无关的hashcode
+        /// </summary>
+        private static int GetStringHashcode(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return 0;
+
+            unchecked
+            {
+                int hash = 23;
+                foreach (char c in s)
+                {
+                    hash = (hash << 5) - hash + c;
+                }
+                if (hash < 0)
+                {
+                    hash = Math.Abs(hash);
+                }
+                return hash;
+            }
         }
     }
 }
