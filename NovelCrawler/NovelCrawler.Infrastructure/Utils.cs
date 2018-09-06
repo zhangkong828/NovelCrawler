@@ -170,16 +170,20 @@ namespace NovelCrawler.Infrastructure
         /// </summary>
         private static string ReplaceNumberToChinese(string str)
         {
-            var reg = new Regex("(\\d+?)章");
-            if (reg.IsMatch(str))
+            try
             {
-                var s = reg.Match(str).Groups[1].Value;
-                if (int.TryParse(s, out int num))
+                var reg = new Regex("(\\d+?)章");
+                if (reg.IsMatch(str))
                 {
-                    var numStr = ConvertExtension.ConvertNumberToChinese(num);
-                    return str.Replace(s, numStr);
+                    var s = reg.Match(str).Groups[1].Value;
+                    if (int.TryParse(s, out int num))
+                    {
+                        var numStr = ConvertExtension.ConvertNumberToChinese(num);
+                        return str.Replace(s, numStr);
+                    }
                 }
             }
+            catch { }
             return str;
         }
 

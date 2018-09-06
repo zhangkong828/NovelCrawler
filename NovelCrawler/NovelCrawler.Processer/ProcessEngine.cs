@@ -344,7 +344,7 @@ namespace NovelCrawler.Processer
             if (oldIndexes == null || oldIndexes.Count == 0)
                 return true;
             //对比 最后一章
-            for (int i = newIndexes.Count - 1; i >= 0; i++)
+            for (int i = newIndexes.Count - 1; i >= 0; i--)
             {
                 var oldChapter = oldIndexes.LastOrDefault();
                 var newChapter = newIndexes[i];
@@ -358,7 +358,7 @@ namespace NovelCrawler.Processer
             //对比 倒数第二章
             if (oldIndexes.Count >= 2)
             {
-                for (int i = newIndexes.Count - 1; i >= 0; i++)
+                for (int i = newIndexes.Count - 1; i >= 0; i--)
                 {
                     var oldChapter = oldIndexes[oldIndexes.Count - 2];
                     var newChapter = newIndexes[i];
