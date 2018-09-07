@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace NovelCrawler.TestConsole
 {
@@ -30,13 +31,13 @@ namespace NovelCrawler.TestConsole
 
         }
 
-        static void Run(RuleModel rule)
+        static async Task Run(RuleModel rule)
         {
             //获取列表
             var novelList = new List<string>();
             TestLog("---------------------------------------");
             TestLog("获取列表");
-            var updateListHtml = HtmlHelper.Get(rule.NovelUpdateListUrl);
+            var updateListHtml =await HtmlHelper.Get(rule.NovelUpdateListUrl);
             if (string.IsNullOrEmpty(updateListHtml))
             {
                 TestLog("更新列表无法访问");
@@ -68,7 +69,7 @@ namespace NovelCrawler.TestConsole
             //获取小说详情页
             TestLog("---------------------------------------");
             TestLog("获取小说详情页");
-            var novelInfoHtml = HtmlHelper.Get(rule.NovelUrl);
+            var novelInfoHtml =await HtmlHelper.Get(rule.NovelUrl);
             if (string.IsNullOrEmpty(novelInfoHtml))
             {
                 TestLog("小说详情页无法访问");
@@ -94,7 +95,7 @@ namespace NovelCrawler.TestConsole
             TestLog("---------------------------------------");
             TestLog("获取小说章节页");
             var chapterList = new List<KeyValuePair<string, string>>();
-            var chapterListHtml = HtmlHelper.Get(rule.ChapterList);
+            var chapterListHtml =await HtmlHelper.Get(rule.ChapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
                 TestLog("小说章节页无法访问");
@@ -122,7 +123,7 @@ namespace NovelCrawler.TestConsole
             TestLog(randomChapter.Key);
             TestLog(randomChapter.Value);
             var chapterUrl = UtilityHelper.Combine(rule.SiteUrl, randomChapter.Value);
-            var chapterHtml = HtmlHelper.Get(chapterUrl);
+            var chapterHtml =await HtmlHelper.Get(chapterUrl);
             if (Regex.IsMatch(chapterHtml, rule.ContentErr.Pattern))
             {
                 TestLog(rule.ContentErr.Pattern);

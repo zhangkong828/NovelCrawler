@@ -200,6 +200,10 @@ namespace NovelCrawler.Processer
                 contentUrl = UtilityHelper.Combine(_rule.SiteUrl, contentUrl);
             Logger.ColorConsole("抓取章节内容:" + contentUrl);
             var chapterHtml = await HtmlHelper.Get(contentUrl);
+            if (string.IsNullOrWhiteSpace(chapterHtml))
+            {
+                throw new SpiderException("内容为空，失败");
+            }
             if (Regex.IsMatch(chapterHtml, _rule.ContentErr.Pattern))
             {
                 throw new SpiderException("匹配到章节错误标识，失败");

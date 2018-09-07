@@ -178,7 +178,6 @@ namespace NovelCrawler.Processer
             {
                 Logger.Error("{0} 抓取失败：{1}", rule.SiteUrl, ex.Message);
             }
-
             catch (Exception ex)
             {
                 Logger.Fatal(ex, "ProcessEngine.Process");
@@ -222,12 +221,35 @@ namespace NovelCrawler.Processer
                     indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });//索引目录
                     Thread.Sleep(500);
                 }
-                catch (Exception ex)
+                catch (SpiderException ex)
                 {
                     Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
-                    //单章节 抓取失败
-                    //todo 策略？ 1.终止  2.跳过失败章节 
-                    Logger.ColorConsole2(string.Format("{0}-{1} 小说章节抓取失败，已终止", chapter.Key, chapter.Value, ex.Message));
+
+                    if (_options.SpiderOptions.错误章节处理 == 错误章节处理.停止本书_继续采集下一本)
+                    {
+                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message));
+                        break;
+                    }
+                    else if(_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
+                    {
+                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message));
+                        var chapterId = ObjectId.NextId();
+                        var chapterEntity = new NovelChapter()
+                        {
+                            Id = chapterId,
+                            NovelId = novelId,
+                            ChapterName = chapter.Key,
+                            UpdateTime = DateTime.Now,
+                            WordCount = 0,
+                            Content = ""
+                        };
+                        _novelChapterRepository.Insert(novelId, chapterEntity);
+                        indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });
+                    }                  
+                }
+                catch (Exception ex)
+                {
+                    Logger.Fatal(ex, "ProcessEngine.ProcessAdd");
                     break;
                 }
             }
@@ -303,12 +325,35 @@ namespace NovelCrawler.Processer
                         indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });//索引目录
                         Thread.Sleep(500);
                     }
-                    catch (Exception ex)
+                    catch (SpiderException ex)
                     {
                         Logger.Error("{0}-{1} 小说章节抓取失败：{2}", chapter.Key, chapter.Value, ex.Message);
-                        //单章节 抓取失败
-                        //todo 策略？ 1.终止  2.跳过失败章节 
-                        Logger.ColorConsole2(string.Format("{0}-{1} 小说章节抓取失败，已终止", chapter.Key, chapter.Value, ex.Message));
+
+                        if (_options.SpiderOptions.错误章节处理 == 错误章节处理.停止本书_继续采集下一本)
+                        {
+                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message));
+                            break;
+                        }
+                        else if (_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
+                        {
+                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message));
+                            var chapterId = ObjectId.NextId();
+                            var chapterEntity = new NovelChapter()
+                            {
+                                Id = chapterId,
+                                NovelId = novelInfo.Id,
+                                ChapterName = chapter.Key,
+                                UpdateTime = DateTime.Now,
+                                WordCount = 0,
+                                Content = ""
+                            };
+                            _novelChapterRepository.Insert(novelInfo.Id, chapterEntity);
+                            indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Fatal(ex, "ProcessEngine.ProcessUpdate");
                         break;
                     }
                 }
