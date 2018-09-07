@@ -63,14 +63,14 @@ namespace NovelCrawler.Processer
             foreach (var item in rules)
             {
                 var rule = item.Value;
-                var task = Task.Run(async () =>
+                var task = Task.Run(() =>
                   {
                       while (true)
                       {
                           try
                           {
                               _cancellationToken.ThrowIfCancellationRequested();
-                              await Process(rule);
+                              Process(rule);
                           }
                           catch (Exception ex)
                           {
@@ -84,6 +84,7 @@ namespace NovelCrawler.Processer
                           {
                               var milliSeconds = (int)_options.SpiderIntervalTime.TotalMilliseconds;
                               milliSeconds = milliSeconds <= 0 ? 60000 : milliSeconds;
+                              Logger.ColorConsole(string.Format("抓取结束，休眠{0}s", milliSeconds));
                               Thread.Sleep(milliSeconds);
                           }
 
@@ -131,48 +132,48 @@ namespace NovelCrawler.Processer
             return _rules;
         }
 
-        private async Task Process(RuleModel rule)
+        private void Process(RuleModel rule)
         {
             var spider = new Spider(null, rule);
 
             try
             {
                 //获取更新列表
-                var novelKeys = await spider.GetUpdateList();
+                var novelKeys = spider.GetUpdateList().Result;
 
                 //并行抓取
-                Parallel.ForEach(novelKeys, async (novelKey, loopState) =>
-                 {
-                     try
-                     {
-                         var model = new NovelInfo();
-                         //获取小说详情
-                         var info = await spider.GetNovelInfo(novelKey);
-                         //判断是否已入库
-                         if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author, out model))
-                         {
-                             if (model.State == 1 && _options.SpiderOptions.不处理已完成小说)
-                                 return;
+                Parallel.ForEach(novelKeys, (novelKey, loopState) =>
+                {
+                    try
+                    {
+                        var model = new NovelInfo();
+                        //获取小说详情
+                        var info = spider.GetNovelInfo(novelKey).Result;
+                        //判断是否已入库
+                        if (_novelInfoRepository.Exists(x => x.Name == info.Name && x.Author == info.Author, out model))
+                        {
+                            if (model.State == 1 && _options.SpiderOptions.不处理已完成小说)
+                                return;
 
-                             if (_options.SpiderOptions.强制清空重采)
-                             {
-                                 //todo
-                             }
+                            if (_options.SpiderOptions.强制清空重采)
+                            {
+                                //todo
+                            }
 
-                             await ProcessUpdate(spider, novelKey, info, model);//更新
-                         }
-                         else
-                         {
-                             if (_options.SpiderOptions.添加新书)
-                                 await ProcessAdd(spider, novelKey, info);//新增
-                         }
+                            ProcessUpdate(spider, novelKey, info, model).Wait();//更新
+                        }
+                        else
+                        {
+                            if (_options.SpiderOptions.添加新书)
+                                ProcessAdd(spider, novelKey, info).Wait();//新增
+                        }
 
-                     }
-                     catch (SpiderException ex)
-                     {
-                         Logger.Error("{0}，{1} 抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
-                     }
-                 });
+                    }
+                    catch (SpiderException ex)
+                    {
+                        Logger.Error("{0}，{1} 抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
+                    }
+                });
             }
             catch (SpiderException ex)
             {
@@ -230,7 +231,7 @@ namespace NovelCrawler.Processer
                         Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message));
                         break;
                     }
-                    else if(_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
+                    else if (_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
                     {
                         Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message));
                         var chapterId = ObjectId.NextId();
@@ -245,7 +246,7 @@ namespace NovelCrawler.Processer
                         };
                         _novelChapterRepository.Insert(novelId, chapterEntity);
                         indexes.Add(new Index() { ChapterId = chapterId, ChapterName = chapter.Key });
-                    }                  
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -375,7 +376,6 @@ namespace NovelCrawler.Processer
 
                 _novelInfoRepository.Update(x => x.Id == novelInfo.Id, novelInfo);
             }
-
 
         }
 
