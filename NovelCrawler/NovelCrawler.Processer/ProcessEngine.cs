@@ -305,7 +305,7 @@ namespace NovelCrawler.Processer
             if (ChapterListNeedUpdate(oldChapterList, newChapterList, out updateIndex))
             {
                 var indexes = new List<Index>();//更新的列表
-                                                //更新章节
+                //更新章节
                 for (int i = updateIndex; i < chapterList.Count; i++)
                 {
                     var chapter = chapterList[i];
