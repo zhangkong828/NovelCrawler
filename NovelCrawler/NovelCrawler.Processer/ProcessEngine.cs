@@ -93,9 +93,20 @@ namespace NovelCrawler.Processer
             }
         }
 
-        public void Stop()
+        /// <summary>
+        /// 强制终止
+        /// </summary>
+        public void Break()
         {
             _cancellation.Cancel();
+        }
+
+        /// <summary>
+        /// 等待抓取结束，停止
+        /// </summary>
+        public void Stop()
+        {
+
         }
 
         private Dictionary<string, RuleModel> LoadRules()
