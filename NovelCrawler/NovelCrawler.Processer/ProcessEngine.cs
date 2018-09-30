@@ -19,6 +19,7 @@ namespace NovelCrawler.Processer
         private static readonly object _obj = new object();
         private static readonly string _ruleDirectoryPath = AppDomain.CurrentDomain.BaseDirectory + "Rules";
         private static readonly CancellationTokenSource _cancellation = new CancellationTokenSource();
+        private static bool _isWorking = false;
 
         private static ProcessEngine _instance;
         private ProcessEngineOptions _options;
@@ -67,6 +68,7 @@ namespace NovelCrawler.Processer
                   {
                       while (true)
                       {
+                          _isWorking = true;
                           try
                           {
                               _cancellationToken.ThrowIfCancellationRequested();
@@ -94,19 +96,12 @@ namespace NovelCrawler.Processer
         }
 
         /// <summary>
-        /// 强制终止
-        /// </summary>
-        public void Break()
-        {
-            _cancellation.Cancel();
-        }
-
-        /// <summary>
         /// 等待抓取结束，停止
         /// </summary>
         public void Stop()
         {
-
+            _isWorking = false;
+            _cancellation.Cancel();
         }
 
         private Dictionary<string, RuleModel> LoadRules()
@@ -157,6 +152,9 @@ namespace NovelCrawler.Processer
                 {
                     try
                     {
+                        if (!_isWorking)
+                            return;
+
                         var model = new NovelInfo();
                         //获取小说详情
                         var info = spider.GetNovelInfo(novelKey).Result;
@@ -215,6 +213,9 @@ namespace NovelCrawler.Processer
             //抓取章节  单个抓取 需要延迟 不然容易被封
             for (int i = 0; i < chapterList.Count; i++)
             {
+                if (!_isWorking)
+                    break;
+
                 var chapter = chapterList[i];
                 try
                 {
@@ -319,6 +320,9 @@ namespace NovelCrawler.Processer
                 //更新章节
                 for (int i = updateIndex; i < chapterList.Count; i++)
                 {
+                    if (!_isWorking)
+                        break;
+
                     var chapter = chapterList[i];
                     try
                     {
