@@ -118,7 +118,7 @@ namespace NovelCrawler.Infrastructure
         private static string GetResponseBody(HttpWebResponse response, Encoding encoding)
         {
             string responseBody = string.Empty;
-            if (response.ContentEncoding.ToLower().Contains("gzip"))
+            if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
             {
                 using (GZipStream stream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
                 {
@@ -128,7 +128,7 @@ namespace NovelCrawler.Infrastructure
                     }
                 }
             }
-            else if (response.ContentEncoding.ToLower().Contains("deflate"))
+            else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
             {
                 using (DeflateStream stream = new DeflateStream(
                     response.GetResponseStream(), CompressionMode.Decompress))
