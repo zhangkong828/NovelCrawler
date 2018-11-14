@@ -73,8 +73,20 @@ namespace NovelCrawler.Infrastructure
             return count + count1;
         }
 
+        /// <summary>
+        /// 比较文本是否一致
+        /// </summary>
+        /// <param name="text1">文本1</param>
+        /// <param name="text2">文本2</param>
+        /// <param name="targetSimilarity">目标相似度(0-1)，大于等于该值 则认为是一致</param>
+        /// <returns></returns>
+        public static bool CompareChapter(string text1, string text2, double targetSimilarity = 0.8)
+        {
+            double similarity = 0;
+            return CompareChapter(text1, text2, out similarity, targetSimilarity);
+        }
 
-        public static bool CompareChapter(string text1, string text2, out double similarity)
+        public static bool CompareChapter(string text1, string text2, out double similarity, double targetSimilarity = 0.8)
         {
             similarity = 0;
             if (string.IsNullOrWhiteSpace(text1) || string.IsNullOrWhiteSpace(text2))
@@ -85,7 +97,7 @@ namespace NovelCrawler.Infrastructure
 
             LevenshteinDistance(text1, text2, out similarity);
 
-            return similarity > 0.8;//相似度大于80% 则认为相同
+            return similarity >= targetSimilarity;//相似度大于等于目标相似度  则认为相同
         }
 
         /// <summary>  

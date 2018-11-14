@@ -153,7 +153,10 @@ namespace NovelCrawler.Processer
                     try
                     {
                         if (!_isWorking)
+                        {
+                            loopState.Stop();
                             return;
+                        }
 
                         var model = new NovelInfo();
                         //获取小说详情
@@ -399,7 +402,6 @@ namespace NovelCrawler.Processer
         /// </summary>
         private bool ChapterListNeedUpdate(List<string> oldIndexes, List<string> newIndexes, out int num)
         {
-            double similarity;
             num = 0;
             if (oldIndexes == null || oldIndexes.Count == 0)
                 return true;
@@ -408,7 +410,7 @@ namespace NovelCrawler.Processer
             {
                 var oldChapter = oldIndexes.LastOrDefault();
                 var newChapter = newIndexes[i];
-                if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
+                if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter))
                 {
                     num = i + 1;
                     return !(i == newIndexes.Count - 1);//如果是最后一章 不更新
@@ -422,16 +424,15 @@ namespace NovelCrawler.Processer
                 {
                     var oldChapter = oldIndexes[oldIndexes.Count - 2];
                     var newChapter = newIndexes[i];
-                    if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter, out similarity))
+                    if (oldChapter == newChapter || Utils.CompareChapter(oldChapter, newChapter))
                     {
                         num = i + 1;
                         return !(i == newIndexes.Count - 1);//如果是最后一章 不更新
                     }
                 }
             }
-
-            //如果库里有数据，是一定不会到这里！除非一章都没对上
-            Logger.Error("章节列表对比失败！");
+            //库里数据和新采集数据没对上，可能采集数据不是最新的或采错！
+            Logger.Info("章节列表对比失败！");
             return false;
         }
 
