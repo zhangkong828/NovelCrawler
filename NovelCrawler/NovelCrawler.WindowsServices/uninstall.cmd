@@ -1,0 +1,1 @@
+NovelCrawler.WindowsServices.exe uninstall
