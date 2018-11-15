@@ -72,6 +72,7 @@ namespace NovelCrawler.Processer
                           try
                           {
                               _cancellationToken.ThrowIfCancellationRequested();
+                              Logger.Info("开始抓取");
                               Process(rule);
                           }
                           catch (Exception ex)
@@ -86,7 +87,7 @@ namespace NovelCrawler.Processer
                           {
                               var milliSeconds = (int)_options.SpiderIntervalTime.TotalMilliseconds;
                               milliSeconds = milliSeconds <= 0 ? 60000 : milliSeconds;
-                              Logger.ColorConsole(string.Format("抓取结束，休眠{0}s", milliSeconds));
+                              Logger.Info(string.Format("抓取结束，休眠{0}s", milliSeconds));
                               Thread.Sleep(milliSeconds);
                           }
 

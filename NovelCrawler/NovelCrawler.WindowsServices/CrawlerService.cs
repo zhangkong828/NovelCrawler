@@ -16,11 +16,12 @@ namespace NovelCrawler.WindowsServices
             try
             {
                 _engine = ProcessEngine.Create();
+                Logger.Info("CrawlerService Start");
                 _engine.Start();
             }
             catch (Exception ex)
             {
-                Logger.Fatal("CrawlerService Start:{0}\r\n{1}", ex.Message, ex.StackTrace);
+                Logger.Fatal("CrawlerService Start Error:{0}\r\n{1}", ex.Message, ex.StackTrace);
             }
         }
 
@@ -29,10 +30,11 @@ namespace NovelCrawler.WindowsServices
             try
             {
                 _engine.Stop();
+                Logger.Info("CrawlerService Stop");
             }
             catch (Exception ex)
             {
-                Logger.Fatal("CrawlerService Stop:{0}\r\n{1}", ex.Message, ex.StackTrace);
+                Logger.Fatal("CrawlerService Stop Error:{0}\r\n{1}", ex.Message, ex.StackTrace);
             }
         }
     }
