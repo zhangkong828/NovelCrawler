@@ -27,8 +27,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{309E0F00-5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovelCrawler.Infrastructure.Test", "Test\NovelCrawler.Infrastructure.Test\NovelCrawler.Infrastructure.Test.csproj", "{95B6D383-CA96-43C6-A0DE-47E5E8281E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovelCrawler.WindowsServices", "NovelCrawler.WindowsServices\NovelCrawler.WindowsServices.csproj", "{3216F2E8-CC12-4444-AE78-E4024888DE06}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{95B6D383-CA96-43C6-A0DE-47E5E8281E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95B6D383-CA96-43C6-A0DE-47E5E8281E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95B6D383-CA96-43C6-A0DE-47E5E8281E75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3216F2E8-CC12-4444-AE78-E4024888DE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3216F2E8-CC12-4444-AE78-E4024888DE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3216F2E8-CC12-4444-AE78-E4024888DE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3216F2E8-CC12-4444-AE78-E4024888DE06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

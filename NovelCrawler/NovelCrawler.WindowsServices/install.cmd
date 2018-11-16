@@ -1,2 +1,0 @@
-NovelCrawler.WindowsServices.exe install
-services.msc
