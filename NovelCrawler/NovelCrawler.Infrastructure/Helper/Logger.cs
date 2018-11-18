@@ -62,7 +62,7 @@ namespace NovelCrawler.Infrastructure
             _customAction?.Invoke(msg);
         }
 
-        public static void ColorConsole2(string msg, ConsoleColor consoleColor = ConsoleColor.Red)
+        public static void ColorConsole2(string msg, ConsoleColor consoleColor = ConsoleColor.Green)
         {
             var old = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;

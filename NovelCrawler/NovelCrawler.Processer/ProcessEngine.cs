@@ -1,16 +1,15 @@
 ﻿using NovelCrawler.Infrastructure;
-using NovelCrawler.Infrastructure.Router;
 using NovelCrawler.Models;
 using NovelCrawler.Processer.Models;
 using NovelCrawler.Repository.IRepository;
 using NovelCrawler.Repository.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using System.IO;
 
 namespace NovelCrawler.Processer
 {
@@ -79,8 +78,12 @@ namespace NovelCrawler.Processer
                           {
                               if (ex is OperationCanceledException)
                               {
-                                  Logger.Info("{0} 已取消", rule.SiteUrl);
+                                  Logger.Fatal("{0} 已取消", rule.SiteUrl);
                                   break;
+                              }
+                              else
+                              {
+                                  Logger.Fatal(ex, "未知异常");
                               }
                           }
                           finally
@@ -186,6 +189,10 @@ namespace NovelCrawler.Processer
                     {
                         Logger.Error("{0}，{1} 抓取失败：{2}", rule.SiteUrl, novelKey, ex.Message);
                     }
+                    catch (Exception ex)
+                    {
+                        Logger.Fatal(ex, "ProcessEngine.Process.Parallel");
+                    }
                 });
             }
             catch (SpiderException ex)
@@ -244,12 +251,12 @@ namespace NovelCrawler.Processer
 
                     if (_options.SpiderOptions.错误章节处理 == 错误章节处理.停止本书_继续采集下一本)
                     {
-                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message));
+                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message), ConsoleColor.Red);
                         break;
                     }
                     else if (_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
                     {
-                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message));
+                        Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message), ConsoleColor.Red);
                         var chapterId = ObjectId.NextId();
                         var chapterEntity = new NovelChapter()
                         {
@@ -351,12 +358,12 @@ namespace NovelCrawler.Processer
 
                         if (_options.SpiderOptions.错误章节处理 == 错误章节处理.停止本书_继续采集下一本)
                         {
-                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message));
+                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.停止本书_继续采集下一本", chapter.Key, chapter.Value, ex.Message), ConsoleColor.Red);
                             break;
                         }
                         else if (_options.SpiderOptions.错误章节处理 == 错误章节处理.入库章节名_继续采集下一章)
                         {
-                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message));
+                            Logger.ColorConsole2(string.Format("{0}-{1} 错误章节处理.入库章节名_继续采集下一章", chapter.Key, chapter.Value, ex.Message), ConsoleColor.Red);
                             var chapterId = ObjectId.NextId();
                             var chapterEntity = new NovelChapter()
                             {

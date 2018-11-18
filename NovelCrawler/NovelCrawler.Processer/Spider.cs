@@ -31,42 +31,42 @@ namespace NovelCrawler.Processer
         {
             try
             {
-                Logger.ColorConsole("开始测试");
-                Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("获取更新列表");
+                Logger.ColorConsole2("开始测试");
+                Logger.ColorConsole2("---------------------------------------");
+                Logger.ColorConsole2("获取更新列表");
                 var novelKeys = await GetUpdateList();
                 foreach (var item in novelKeys)
                 {
-                    Logger.ColorConsole(item);
+                    Logger.ColorConsole2(item);
                 }
-                Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("随机获取小说");
+                Logger.ColorConsole2("---------------------------------------");
+                Logger.ColorConsole2("随机获取小说");
                 var novelKey = novelKeys[UtilityHelper.Random(0, novelKeys.Count)];
                 var info = await GetNovelInfo(novelKey);
-                Logger.ColorConsole(string.Format("Name:{0}", info.Name));
-                Logger.ColorConsole(string.Format("ImageUrl:{0}", info.ImageUrl));
-                Logger.ColorConsole(string.Format("Sort:{0}", info.Sort));
-                Logger.ColorConsole(string.Format("Author:{0}", info.Author));
-                Logger.ColorConsole(string.Format("State:{0}", info.State));
-                Logger.ColorConsole(string.Format("Des:{0}", info.Des));
-                Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("获取章节列表");
+                Logger.ColorConsole2(string.Format("Name:{0}", info.Name));
+                Logger.ColorConsole2(string.Format("ImageUrl:{0}", info.ImageUrl));
+                Logger.ColorConsole2(string.Format("Sort:{0}", info.Sort));
+                Logger.ColorConsole2(string.Format("Author:{0}", info.Author));
+                Logger.ColorConsole2(string.Format("State:{0}", info.State));
+                Logger.ColorConsole2(string.Format("Des:{0}", info.Des));
+                Logger.ColorConsole2("---------------------------------------");
+                Logger.ColorConsole2("获取章节列表");
                 var chapterIndex = info.ChapterIndex;
                 var chapterList = await GetNovelChapterList(novelKey, chapterIndex);
-                Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("随机获取章节");
+                Logger.ColorConsole2("---------------------------------------");
+                Logger.ColorConsole2("随机获取章节");
                 var randomChapter = chapterList[UtilityHelper.Random(0, chapterList.Count)];
-                Logger.ColorConsole(randomChapter.Key);
-                Logger.ColorConsole(randomChapter.Value);
+                Logger.ColorConsole2(randomChapter.Key);
+                Logger.ColorConsole2(randomChapter.Value);
                 var chapterKey = randomChapter.Value;
                 var content = await GetContent(novelKey, chapterIndex, chapterKey);
-                Logger.ColorConsole(content);
-                Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("测试结束");
+                Logger.ColorConsole2(content);
+                Logger.ColorConsole2("---------------------------------------");
+                Logger.ColorConsole2("测试结束");
             }
             catch (Exception ex)
             {
-                Logger.ColorConsole(ex.Message, ConsoleColor.Red);
+                Logger.ColorConsole2(ex.Message, ConsoleColor.Red);
             }
         }
 
@@ -78,7 +78,7 @@ namespace NovelCrawler.Processer
             }
             catch (Exception ex)
             {
-                Logger.ColorConsole(ex.Message, ConsoleColor.Red);
+                Logger.ColorConsole2(ex.Message, ConsoleColor.Red);
             }
         }
 
@@ -123,7 +123,7 @@ namespace NovelCrawler.Processer
             var novelUrl = _rule.NovelUrl.Replace("{NovelKey}", novelKey);
             if (!novelUrl.Contains(_rule.SiteUrl))
                 novelUrl = UtilityHelper.Combine(_rule.SiteUrl, novelUrl);
-            Logger.ColorConsole("抓取小说详情:" + novelUrl);
+            Logger.ColorConsole2("抓取小说详情:" + novelUrl);
             var novelInfoHtml = await HtmlHelper.Get(novelUrl);
             if (string.IsNullOrWhiteSpace(novelInfoHtml))
                 throw new SpiderException("小说详情页无法访问");
@@ -141,7 +141,7 @@ namespace NovelCrawler.Processer
             info.Des = RegexMatch(_rule.NovelDes, novelInfoHtml);
             info.ChapterIndex = RegexMatch(_rule.ChapterIndex, novelInfoHtml); //章节目录
 
-            if (!Utils.ObjectIsNotNull<NovelDetails>(info, "Des", "ChapterIndex"))
+            if (!Utils.ObjectIsNotNull(info, "Des", "ChapterIndex"))
             {
                 throw new SpiderException("获取小说详情失败，有匹配不到的值");
             }
@@ -161,7 +161,7 @@ namespace NovelCrawler.Processer
             var chapterList = _rule.ChapterList.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex);
             if (!chapterList.Contains(_rule.SiteUrl))
                 chapterList = UtilityHelper.Combine(_rule.SiteUrl, chapterList);
-            Logger.ColorConsole("抓取章节目录:" + chapterList);
+            Logger.ColorConsole2("抓取章节目录:" + chapterList);
             var chapterListHtml = await HtmlHelper.Get(chapterList);
             if (string.IsNullOrEmpty(chapterListHtml))
             {
@@ -178,7 +178,7 @@ namespace NovelCrawler.Processer
                 var name = chapterNameMc[i].Groups[1].Value.Trim();
                 name = ReplaceMatch(name, _rule.ChapterName.Filter.OuterXml);
                 var url = chapterUrlMc[i].Groups[1].Value.Trim();
-                Logger.ColorConsole(string.Format("{0}-{1}", name, url));
+                Logger.ColorConsole2(string.Format("{0}-{1}", name, url));
                 result.Add(new KeyValuePair<string, string>(name, url));
             }
             return result;
@@ -198,7 +198,7 @@ namespace NovelCrawler.Processer
             var contentUrl = _rule.ContentUrl.Replace("{NovelKey}", novelKey).Replace("{ChapterIndex}", chapterIndex).Replace("{ChapterKey}", chapterKey);
             if (!contentUrl.Contains(_rule.SiteUrl))
                 contentUrl = UtilityHelper.Combine(_rule.SiteUrl, contentUrl);
-            Logger.ColorConsole("抓取章节内容:" + contentUrl);
+            Logger.ColorConsole2("抓取章节内容:" + contentUrl);
             var chapterHtml = await HtmlHelper.Get(contentUrl);
             if (string.IsNullOrWhiteSpace(chapterHtml))
             {

@@ -1,14 +1,13 @@
 ﻿using NovelCrawler.Infrastructure;
 using NovelCrawler.Processer;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace NovelCrawler.Services
 {
     class Program
     {
+        static bool isStop = false;
         static void Main(string[] args)
         {
             //捕获Ctrl+C事件
@@ -39,6 +38,9 @@ namespace NovelCrawler.Services
 
         private static void Stop()
         {
+            if (isStop)
+                return;
+            isStop = true;
             ProcessEngine.Create().Stop();
             int count = 10;
             while (count > 0)
