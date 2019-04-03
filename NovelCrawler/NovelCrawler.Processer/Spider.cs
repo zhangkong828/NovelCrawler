@@ -27,7 +27,7 @@ namespace NovelCrawler.Processer
         /// <summary>
         /// 测试规则
         /// </summary>
-        public async Task TestRule()
+        public async Task<bool> TestRule()
         {
             try
             {
@@ -68,6 +68,7 @@ namespace NovelCrawler.Processer
             {
                 Logger.ColorConsole2(ex.Message, ConsoleColor.Red);
             }
+            return true;
         }
 
         public void Run()

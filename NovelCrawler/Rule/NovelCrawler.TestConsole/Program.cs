@@ -14,15 +14,15 @@ namespace NovelCrawler.TestConsole
         static void Main(string[] args)
         {
             var rule = XmlHelper.XmlDeserializeFromFile<RuleModel>("testRule.xml", Encoding.UTF8);
-          
+
             var spider = new Spider(null, rule);
-            spider.TestRule();
+            var result = spider.TestRule().Result;
             Console.WriteLine("over");
 
             Console.ReadKey();
         }
 
-       
-       
+
+
     }
 }
