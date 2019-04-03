@@ -40,7 +40,7 @@ namespace NovelCrawler.Processer
                     Logger.ColorConsole(item);
                 }
                 Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("随机获取小说");
+                Logger.ColorConsole("测试--随机获取小说");
                 var novelKey = novelKeys[UtilityHelper.Random(0, novelKeys.Count)];
                 var info = await GetNovelInfo(novelKey);
                 Logger.ColorConsole(string.Format("Name:{0}", info.Name));
@@ -54,7 +54,7 @@ namespace NovelCrawler.Processer
                 var chapterIndex = info.ChapterIndex;
                 var chapterList = await GetNovelChapterList(novelKey, chapterIndex);
                 Logger.ColorConsole("---------------------------------------");
-                Logger.ColorConsole("随机获取章节");
+                Logger.ColorConsole("测试--随机获取章节");
                 var randomChapter = chapterList[UtilityHelper.Random(0, chapterList.Count)];
                 Logger.ColorConsole(randomChapter.Key);
                 Logger.ColorConsole(randomChapter.Value);
